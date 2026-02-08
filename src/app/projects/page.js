@@ -90,7 +90,7 @@ const projects = [
     link: "https://cityriskview.vercel.app",
     status: "公開中",
     start: "2025/04/27",
-    update: "2025/12/17",
+    update: "2026/02/08",
     imageUrl: "/images/cityriskview.png",
   },
   {
@@ -130,13 +130,31 @@ const projects = [
     imageUrl: "/images/omiyappy.png",
   },
   {
-    title: "個人ブログ",
+    title: "個人ブログ（echogarden）",
     description: "技術的な内容や日常の出来事を綴る、SNSを兼ねた個人ブログです。",
     link: "https://echogarden-production.up.railway.app/",
     status: "公開中",
     start: "2025/12/31",
     update: "#",
     imageUrl: "/images/personal-blog.png",
+  },
+  {
+    title: "みちくさメモリー",
+    description: "AIに出してもらったお題をもとに散歩し、見つけた風景や出来事を記録するアプリです。",
+    link: "https://www.michikusa-memory.com/",
+    status: "公開中",
+    start: "2026/02/01",
+    update: "2026/02/08",
+    imageUrl: "/images/michikusa.png",
+  },
+  {
+    title: "みちくさメモリー公式サイト",
+    description: "「みちくさメモリー」の公式サイトです。 アプリの紹介やダウンロードリンクを掲載しています。",
+    link: "https://info.michikusa-memory.com/",
+    status: "公開中",
+    start: "2026/02/08",
+    update: "2026/02/08",
+    imageUrl: "/images/michikusa.png",
   },
 ];
 
