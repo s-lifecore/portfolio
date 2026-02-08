@@ -16,6 +16,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ja" className={`${inter.variable} ${jetBrainsMono.variable} ${poppins.variable} ${playfairDisplay.variable} ${pacifico.variable}`}>
+      <head>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="c58f65b0-74c9-4768-aec4-98669b72d129"></script>
+      </head>
       <body className="antialiased">
         {children}
       </body>
