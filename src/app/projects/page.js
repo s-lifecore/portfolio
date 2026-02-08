@@ -159,60 +159,116 @@ const projects = [
 ];
 
 export default function ProjectsPage() {
+  const getStatusStyle = (status) => {
+    const styles = {
+      "公開中": "bg-green-100 text-green-800 border-green-300",
+      "限定公開中": "bg-yellow-100 text-yellow-800 border-yellow-300",
+      "公開停止中": "bg-red-100 text-red-800 border-red-300",
+      "制作中": "bg-blue-100 text-blue-800 border-blue-300",
+      "GitHub公開中": "bg-pink-100 text-pink-800 border-pink-300",
+    };
+    return styles[status] || "bg-gray-100 text-gray-800 border-gray-300";
+  };
+
+  const isLinkActive = (status) => {
+    return ["公開中", "制作中", "GitHub公開中", "限定公開中"].includes(status);
+  };
+
   return (
     <>
-      <Header className="pb-6" />  {/* Increased padding for the header */}
-      <main className="pt-20 p-6"> {/* Increased padding-top for better spacing */}
+      <Header />
+      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 min-h-screen">
         <div className="background-shape shape-top-right" />
         <div className="background-shape shape-bottom-left" />
-        <h1 className="text-3xl font-bold mb-8 text-center">成果物一覧</h1> {/* Increased margin-bottom */}
-        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105"
-            >
-              {project.imageUrl && (
-                <img
-                  src={project.imageUrl}
-                  alt={project.title}
-                  className="w-full h-40 object-cover rounded-lg mb-4"
-                />
-              )}
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {project.title}
-              </h2>
-              <p className="text-gray-700 dark:text-gray-300">{project.description}</p>
-              {project.link !== "#" && (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`mt-4 inline-block px-4 py-2 text-white rounded transition ${
-                    project.status === "公開中" || project.status === "制作中" || project.status === "GitHub公開中"
-                      ? "bg-blue-500 hover:bg-blue-600"
-                      : "bg-gray-500 cursor-not-allowed"
-                  }`}
-                >
-                  View Project
-                </a>
-              )}
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                公開状況：{project.status}
-              </p>
-
-              {(project.update !== "#" || project.start !== "#") && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  {project.update === "#"
-                    ? `制作開始日：${project.start}`
-                    : `更新日：${project.update}`}
-                </p>
-              )}
-            </div>
-          ))}
+        
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center bg-gradient-to-r from-blue-500 to-pink-400 bg-clip-text text-transparent">
+            成果物一覧
+          </h1>
+          <p className="text-center text-gray-600 mb-12 text-lg">
+            これまでに制作したプロジェクトの一覧です
+          </p>
+          
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project, index) => (
+              <div
+                key={index}
+                className="group bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
+              >
+                {project.imageUrl && (
+                  <div className="relative overflow-hidden h-48 bg-gray-100">
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+                )}
+                
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex-1 leading-tight">
+                      {project.title}
+                    </h2>
+                  </div>
+                  
+                  <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border mb-3 ${getStatusStyle(project.status)}`}>
+                    {project.status}
+                  </span>
+                  
+                  <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-3 min-h-[4.5rem]">
+                    {project.description}
+                  </p>
+                  
+                  <div className="flex flex-col gap-2 mb-4">
+                    {(project.update !== "#" || project.start !== "#") && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                        {project.update === "#"
+                          ? `制作開始: ${project.start}`
+                          : `更新: ${project.update}`}
+                      </p>
+                    )}
+                  </div>
+                  
+                  {project.link !== "#" && isLinkActive(project.status) ? (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <span>プロジェクトを見る</span>
+                      <svg
+                        className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        />
+                      </svg>
+                    </a>
+                  ) : (
+                    <button
+                      className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 font-medium rounded-lg cursor-not-allowed"
+                      disabled
+                    >
+                      準備中
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
-      <CustomFooter className="item-align-bottom" />
+      <CustomFooter />
     </>
   );
 }

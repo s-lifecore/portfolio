@@ -2,11 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { MoreVertical, X } from "lucide-react"; // 三点リーダーアイコンに変更
+import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: "/", label: "ホーム" },
+    { href: "/about", label: "自己紹介" },
+    { href: "/projects", label: "制作物一覧" },
+    { href: "/contact", label: "お問い合わせ" },
+    { href: "/blogs", label: "外部記事一覧" },
+  ];
 
   // 外クリックでメニュー閉じる
   useEffect(() => {
@@ -18,46 +28,138 @@ export default function Header() {
 
     if (isMenuOpen) {
       window.addEventListener("mousedown", handleClickOutside);
-    } else {
-      window.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => window.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen]);
 
+  // ESCキーでメニューを閉じる
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isMenuOpen]);
+
+  // メニュー開閉時にbodyのスクロールを制御
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMenuOpen]);
+
   return (
-    <header className="shadow-md p-4 fixed w-full top-0 z-50 bg-white">
-      <nav className="max-w-7xl mx-auto flex justify-between items-center px-4">
+    <header className="shadow-md fixed w-full top-0 z-50 bg-white/95 backdrop-blur-md transition-all duration-300">
+      <nav className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
         {/* ロゴ */}
-        <div className="text-2xl font-semibold">
-          <Link href="/" className="hover:text-blue-400">ホーム</Link>
+        <Link
+          href="/"
+          className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-pink-400 bg-clip-text text-transparent hover:scale-105 transition-transform duration-200"
+        >
+          Sudo
+        </Link>
+
+        {/* デスクトップナビゲーション */}
+        <div className="hidden md:flex items-center space-x-1">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* メニューボタン（常に表示） */}
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X size={28} /> : <MoreVertical size={28} />}
+        {/* モバイルメニューボタン */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
+          aria-expanded={isMenuOpen}
+        >
+          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </nav>
 
-      {/* メニュー（全画面オーバーレイ） */}
+      {/* モバイルメニュー（サイドバー） */}
+      {/* 背景オーバーレイ */}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 z-40 ${
+          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+      />
+      
+      {/* サイドバー */}
       <div
         ref={dropdownRef}
-        className={`fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm flex flex-col items-center justify-center transition-transform ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        className={`md:hidden fixed top-0 bottom-0 right-0 h-screen w-80 max-w-[85vw] bg-gradient-to-b from-pink-300 via-pink-200 to-rose-200 flex flex-col transition-transform duration-300 z-50 ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        role="dialog"
+        aria-modal="true"
       >
-        {/* 閉じるボタン */}
-        <button className="absolute top-4 right-4 text-white" onClick={() => setIsMenuOpen(false)}>
-          <X size={32} />
-        </button>
+        {/* ヘッダー部分 */}
+        <div className="flex items-center justify-between p-6 border-b border-white">
+          <h2 className="text-2xl font-bold text-white">メニュー</h2>
+          <button
+            className="text-white p-2 rounded-lg hover:bg-white/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="メニューを閉じる"
+          >
+            <X size={28} />
+          </button>
+        </div>
 
         {/* メニューリンク */}
-        <div className="flex flex-col space-y-6 text-white text-xl">
-          <Link href="/" onClick={() => setIsMenuOpen(false)}>ホーム</Link>
-          <Link href="/about" onClick={() => setIsMenuOpen(false)}>自己紹介</Link>
-          <Link href="/projects" onClick={() => setIsMenuOpen(false)}>制作物一覧</Link>
-          <Link href="/contact" onClick={() => setIsMenuOpen(false)}>お問い合わせ</Link>
-          <Link href="/blogs" onClick={() => setIsMenuOpen(false)}>外部記事一覧</Link>
+        <nav className="flex flex-col p-6 space-y-3 overflow-y-auto" role="navigation">
+          {navLinks.map((link, index) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-lg font-medium hover:scale-105 transition-all duration-200 py-4 px-5 rounded-xl ${
+                  isActive 
+                    ? "bg-white text-blue-600 shadow-lg font-bold" 
+                    : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md"
+                }`}
+                style={{
+                  animationDelay: `${index * 50}ms`,
+                  animation: isMenuOpen ? "slideIn 0.3s ease-out forwards" : "none",
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* フッター部分 */}
+        <div className="mt-auto p-6 border-t border-white">
+          <p className="text-sm text-white text-center">
+            © 2026 Sudo
+          </p>
         </div>
       </div>
     </header>
