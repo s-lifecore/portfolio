@@ -23,6 +23,11 @@ const aboutData = {
   },
   socialMedia: [
     { platform: "Twitter", link: "https://twitter.com/ocean_t_umi/" },
+    { platform: "note", link: "https://note.com/s-taku0502" },
+    { platform: "Qiita", link: "https://qiita.com/s-taku0502" },
+    { platform: "Zenn", link: "https://zenn.dev/s-taku0502" },
+    { platform: "GitHub", link: "https://github.com/s-taku0502" },
+    { platform: "Gist", link: "https://gist.github.com/s-taku0502" },
   ],
   extracurricular: [
     { name: "CirKitプロジェクト / 株式会社CirKit", link: "https://cirkit.jp/" },
