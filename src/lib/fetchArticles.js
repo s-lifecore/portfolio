@@ -51,7 +51,7 @@ export async function fetchRssArticles(rssUrl, sourceName) {
 
         const parser = new Parser();
         const feed = await parser.parseString(xml);
-        
+
         // noteの場合の特別な処理
         if (sourceName === 'Note') {
             // noteの記事URLに含まれる特定のパラメータや
@@ -63,8 +63,8 @@ export async function fetchRssArticles(rssUrl, sourceName) {
                 source: sourceName,
                 // noteの限定公開判定ロジックを追加
                 private: item.link.includes('private') || // 例: URLに'private'が含まれる
-                        item.categories?.includes('private') || // 例: カテゴリーに'private'が含まれる
-                        false // デフォルトは非限定公開
+                    item.categories?.includes('private') || // 例: カテゴリーに'private'が含まれる
+                    false // デフォルトは非限定公開
             }));
         }
 
