@@ -22,8 +22,35 @@ export async function fetchRssArticles(rssUrl, sourceName) {
     try {
         const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`);
         const data = await res.text();
+
+        // 一部のプロキシやレスポンスがJSONラップされている場合に対応
+        let xml = data;
+        try {
+            const trimmed = data.trim();
+            if (trimmed.startsWith('{')) {
+                const maybeJson = JSON.parse(trimmed);
+                if (maybeJson && typeof maybeJson.contents === 'string') {
+                    xml = maybeJson.contents;
+                }
+            }
+        } catch (e) {
+            // JSONでなければそのまま進める
+        }
+
+        // レスポンスに不要なヘッダやテキストが先頭に付与されている場合、最初の'<'から切り出す
+        const firstTag = xml.indexOf('<');
+        if (firstTag > 0) {
+            xml = xml.slice(firstTag);
+        }
+
+        // XMLっぽくない場合はエラーとして扱い、パースを試みない
+        if (!xml.trim().startsWith('<')) {
+            console.error(`RSS Feed Error (${sourceName}): response is not XML. Preview:`, xml.slice(0, 200));
+            return [];
+        }
+
         const parser = new Parser();
-        const feed = await parser.parseString(data);
+        const feed = await parser.parseString(xml);
         
         // noteの場合の特別な処理
         if (sourceName === 'Note') {
