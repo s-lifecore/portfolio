@@ -54,6 +54,13 @@ export default function EventCard({ event }) {
                         </a>
                     </div>
                 )}
+                {event.reviewUrl && (
+                    <div className="mt-2">
+                        <a href={event.reviewUrl} onClick={(e) => e.stopPropagation()} target="_blank" rel="noreferrer" className="text-sm text-blue-600 underline">
+                            感想ページ
+                        </a>
+                    </div>
+                )}
             </article>
 
             {open && (
@@ -89,6 +96,17 @@ export default function EventCard({ event }) {
                                 <div className="mt-1">
                                     {event.url ? (
                                         <a href={event.url} target="_blank" rel="noreferrer" className="text-blue-600 underline">{event.url}</a>
+                                    ) : (
+                                        '-'
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="font-medium">感想ページ</div>
+                                <div className="mt-1">
+                                    {event.reviewUrl ? (
+                                        <a href={event.reviewUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">{event.reviewUrl}</a>
                                     ) : (
                                         '-'
                                     )}

@@ -9,6 +9,10 @@ export default function AdminEventsClient() {
     const [description, setDescription] = useState("");
     const [hosted, setHosted] = useState(false);
     const [participated, setParticipated] = useState(false);
+    const [host, setHost] = useState("");
+    const [venue, setVenue] = useState("");
+    const [url, setUrl] = useState("");
+    const [reviewUrl, setReviewUrl] = useState("");
 
     async function load() {
         const res = await fetch('/api/events');
@@ -26,9 +30,14 @@ export default function AdminEventsClient() {
         if (participated) tags.push('participated');
 
         const payload = { title, date, description, tags };
+        if (host) payload.host = host;
+        if (venue) payload.venue = venue;
+        if (url) payload.url = url;
+        if (reviewUrl) payload.reviewUrl = reviewUrl;
         const res = await fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (res.ok) {
             setTitle(''); setDate(''); setDescription(''); setHosted(false); setParticipated(false);
+            setHost(''); setVenue(''); setUrl(''); setReviewUrl('');
             load();
         }
     }
@@ -57,6 +66,14 @@ export default function AdminEventsClient() {
                     <input className="mt-1 w-full border rounded px-3 py-2" value={title} onChange={(e) => setTitle(e.target.value)} required />
                 </div>
                 <div>
+                    <label className="block text-sm font-medium">主催者</label>
+                    <input className="mt-1 w-full border rounded px-3 py-2" value={host} onChange={(e) => setHost(e.target.value)} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">会場</label>
+                    <input className="mt-1 w-full border rounded px-3 py-2" value={venue} onChange={(e) => setVenue(e.target.value)} />
+                </div>
+                <div>
                     <label className="block text-sm font-medium">日付</label>
                     <input type="date" className="mt-1 border rounded px-3 py-2" value={date} onChange={(e) => setDate(e.target.value)} required />
                 </div>
@@ -67,6 +84,14 @@ export default function AdminEventsClient() {
                 <div className="flex items-center space-x-4">
                     <label className="flex items-center space-x-2"><input type="checkbox" checked={hosted} onChange={(e) => setHosted(e.target.checked)} /> <span>主催</span></label>
                     <label className="flex items-center space-x-2"><input type="checkbox" checked={participated} onChange={(e) => setParticipated(e.target.checked)} /> <span>参加</span></label>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">外部URL</label>
+                    <input className="mt-1 w-full border rounded px-3 py-2" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium">感想ページURL</label>
+                    <input className="mt-1 w-full border rounded px-3 py-2" value={reviewUrl} onChange={(e) => setReviewUrl(e.target.value)} placeholder="https://..." />
                 </div>
                 <div>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded">追加</button>
@@ -80,6 +105,14 @@ export default function AdminEventsClient() {
                             <div className="font-semibold">{ev.title}</div>
                             <div className="text-sm text-gray-500">{ev.date} · {ev.tags?.join(', ')}</div>
                             <div className="mt-2 text-sm">{ev.description}</div>
+                            <div className="mt-2 text-sm">
+                                {ev.url && (
+                                    <a href={ev.url} target="_blank" rel="noreferrer" className="text-blue-600 underline mr-3">外部リンク</a>
+                                )}
+                                {ev.reviewUrl && (
+                                    <a href={ev.reviewUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">感想ページ</a>
+                                )}
+                            </div>
                         </div>
                         <div className="flex flex-col space-y-2 ml-4">
                             <button onClick={() => handleDelete(ev.id)} className="px-3 py-1 bg-red-500 text-white rounded">削除</button>
