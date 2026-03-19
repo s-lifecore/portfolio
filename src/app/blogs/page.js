@@ -8,9 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
     const qiita = await fetchQiitaArticles('takumi1227');
-    const zenn = await fetchRssArticles('https://zenn.dev/sudo_dev/feed', 'Zenn');
+    // const zenn = await fetchRssArticles('https://zenn.dev/sudo_dev/feed', 'Zenn');
 
-    const articles = [...qiita, ...zenn].sort(
+    // const articles = [...qiita, ...zenn].sort(
+    const articles = [...qiita].sort(
         (a, b) => new Date(b.date) - new Date(a.date)
     );
 
