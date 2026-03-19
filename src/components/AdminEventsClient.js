@@ -13,6 +13,7 @@ export default function AdminEventsClient() {
     const [venue, setVenue] = useState("");
     const [url, setUrl] = useState("");
     const [reviewUrl, setReviewUrl] = useState("");
+    const [editingId, setEditingId] = useState(null);
 
     async function load() {
         const res = await fetch('/api/events');
@@ -28,24 +29,56 @@ export default function AdminEventsClient() {
         const tags = [];
         if (hosted) tags.push('hosted');
         if (participated) tags.push('participated');
-
         const payload = { title, date, description, tags };
         if (host) payload.host = host;
         if (venue) payload.venue = venue;
         if (url) payload.url = url;
         if (reviewUrl) payload.reviewUrl = reviewUrl;
-        const res = await fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-        if (res.ok) {
-            setTitle(''); setDate(''); setDescription(''); setHosted(false); setParticipated(false);
-            setHost(''); setVenue(''); setUrl(''); setReviewUrl('');
-            load();
+
+        if (editingId) {
+            // update
+            payload.id = editingId;
+            const res = await fetch('/api/events', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (res.ok) {
+                clearForm();
+                load();
+            }
+        } else {
+            // create
+            const res = await fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (res.ok) {
+                clearForm();
+                load();
+            }
         }
+    }
+
+    function clearForm() {
+        setTitle(''); setDate(''); setDescription(''); setHosted(false); setParticipated(false);
+        setHost(''); setVenue(''); setUrl(''); setReviewUrl('');
+        setEditingId(null);
     }
 
     async function handleDelete(id) {
         if (!confirm('削除しますか？')) return;
         await fetch(`/api/events?id=${id}`, { method: 'DELETE' });
+        // if deleting currently editing item, clear form
+        if (editingId === id) clearForm();
         load();
+    }
+
+    function startEdit(ev) {
+        setEditingId(ev.id);
+        setTitle(ev.title || '');
+        setDate(ev.date || '');
+        setDescription(ev.description || '');
+        setHosted(Array.isArray(ev.tags) && ev.tags.includes('hosted'));
+        setParticipated(Array.isArray(ev.tags) && ev.tags.includes('participated'));
+        setHost(ev.host || '');
+        setVenue(ev.venue || '');
+        setUrl(ev.url || '');
+        setReviewUrl(ev.reviewUrl || '');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function handleLogout() {
@@ -93,8 +126,11 @@ export default function AdminEventsClient() {
                     <label className="block text-sm font-medium">感想ページURL</label>
                     <input className="mt-1 w-full border rounded px-3 py-2" value={reviewUrl} onChange={(e) => setReviewUrl(e.target.value)} placeholder="https://..." />
                 </div>
-                <div>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded">追加</button>
+                <div className="flex items-center space-x-2">
+                    <button className="px-4 py-2 bg-blue-600 text-white rounded">{editingId ? '更新' : '追加'}</button>
+                    {editingId && (
+                        <button type="button" onClick={() => clearForm()} className="px-4 py-2 bg-gray-200 rounded">キャンセル</button>
+                    )}
                 </div>
             </form>
 
@@ -115,6 +151,7 @@ export default function AdminEventsClient() {
                             </div>
                         </div>
                         <div className="flex flex-col space-y-2 ml-4">
+                            <button onClick={() => startEdit(ev)} className="px-3 py-1 bg-yellow-500 text-white rounded">編集</button>
                             <button onClick={() => handleDelete(ev.id)} className="px-3 py-1 bg-red-500 text-white rounded">削除</button>
                         </div>
                     </div>

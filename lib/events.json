@@ -1,12 +1,13 @@
 [
-    {
-        "title": "サンプル",
-        "date": "2026-03-19",
-        "description": "このような感じで、今後追加していきます。",
-        "tags": [
-            "participated"
-        ],
-        "id": "e1773894107798",
-        "url": "https://lifecore.jp"
-    }
+  {
+    "title": "サンプル",
+    "date": "2026-03-19",
+    "description": "このような感じで、今後追加していきます。",
+    "tags": [
+      "participated"
+    ],
+    "id": "e1773894107798",
+    "url": "https://lifecore.jp",
+    "reviewUrl": "https://note.com/link_sudo"
+  }
 ]
