@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function AdminLogin() {
     const [password, setPassword] = useState("");
@@ -31,6 +32,9 @@ export default function AdminLogin() {
                     <button className="px-4 py-2 bg-blue-600 text-white rounded">ログイン</button>
                 </div>
             </form>
+            <div className="mt-4">
+                <Link href="/" className="text-blue-600 underline">ホームへ戻る</Link>
+            </div>
         </div>
     );
 }

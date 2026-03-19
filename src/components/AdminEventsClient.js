@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function AdminEventsClient() {
     const [events, setEvents] = useState([]);
@@ -90,7 +91,10 @@ export default function AdminEventsClient() {
         <main className="max-w-4xl mx-auto px-4 py-24">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">イベント管理</h1>
-                <button onClick={handleLogout} className="px-3 py-1 bg-gray-200 rounded">ログアウト</button>
+                <div className="flex items-center space-x-2">
+                    <Link href="/" className="px-3 py-1 bg-gray-100 rounded">ホームへ戻る</Link>
+                    <button onClick={handleLogout} className="px-3 py-1 bg-gray-200 rounded">ログアウト</button>
+                </div>
             </div>
 
             <form onSubmit={handleAdd} className="space-y-3 mb-8">
