@@ -1,20 +1,17 @@
 import EventsView from "../../components/EventsView";
-import fs from 'fs/promises';
-import path from 'path';
+import { ensureDb, listEvents } from "@/lib/eventsFirestore";
 
 export default async function JoinedPage() {
-    const jsonPath = path.join(process.cwd(), 'lib', 'events.json');
     let events = [];
     try {
-        const raw = await fs.readFile(jsonPath, 'utf-8');
-        events = JSON.parse(raw);
-        events.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const db = ensureDb();
+        events = await listEvents(db);
     } catch (e) {
         events = [];
     }
 
     return (
-        <div className="relative overflow-hidden bg-gradient-to-b from-rose-50 via-white to-pink-50">
+        <div className="relative from-rose-50">
             <div className="background-shape shape-top-right" />
             <div className="background-shape shape-bottom-left" />
 

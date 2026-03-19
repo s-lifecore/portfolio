@@ -3,7 +3,11 @@ import admin from 'firebase-admin';
 let db = null;
 
 function initAdmin() {
-    if (admin.apps.length) return;
+    if (admin.apps.length) {
+        // HMRでモジュール再評価された場合でも既存appからdbを再取得する
+        db = admin.firestore();
+        return;
+    }
     const { FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY } = process.env;
     if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) return;
 

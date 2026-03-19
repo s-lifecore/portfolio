@@ -34,15 +34,18 @@ async function migrate() {
     try { events = JSON.parse(raw); } catch (e) { console.error('Invalid JSON in lib/events.json'); process.exit(1); }
 
     const col = db.collection('events');
-    console.log(`Migrating ${events.length} events to Firestore collection 'events'...`);
+    console.log(`Migrating ${events.length} events to Firestore path 'events/{docId}'...`);
     for (const ev of events) {
         const id = ev.id || undefined;
+        const payload = { ...ev };
+        delete payload.id;
+
         if (id) {
-            await col.doc(id).set(ev);
-            console.log(`-> wrote ${id}`);
+            await col.doc(id).set(payload);
+            console.log(`-> wrote events/${id}`);
         } else {
-            const ref = await col.add(ev);
-            console.log(`-> added ${ref.id}`);
+            const ref = await col.add(payload);
+            console.log(`-> added events/${ref.id}`);
         }
     }
     console.log('Migration complete');

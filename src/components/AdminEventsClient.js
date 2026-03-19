@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export default function AdminEventsClient() {
     const [events, setEvents] = useState([]);
+    const [loadError, setLoadError] = useState("");
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [description, setDescription] = useState("");
@@ -17,9 +18,18 @@ export default function AdminEventsClient() {
     const [editingId, setEditingId] = useState(null);
 
     async function load() {
+        setLoadError("");
         const res = await fetch('/api/events');
         const data = await res.json();
-        const sorted = (data || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (!res.ok) {
+            setEvents([]);
+            setLoadError(data?.error || 'イベントの取得に失敗しました。');
+            return;
+        }
+
+        const list = Array.isArray(data) ? data : [];
+        const sorted = list.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
         setEvents(sorted);
     }
 
@@ -139,6 +149,11 @@ export default function AdminEventsClient() {
             </form>
 
             <section className="space-y-4">
+                {loadError && (
+                    <div className="p-3 rounded border border-red-300 bg-red-50 text-red-700 text-sm">
+                        {loadError}
+                    </div>
+                )}
                 {events.map((ev) => (
                     <div key={ev.id} className="p-4 border rounded flex justify-between items-start">
                         <div>
