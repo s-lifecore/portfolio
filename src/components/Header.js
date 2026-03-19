@@ -154,13 +154,6 @@ export default function Header() {
             );
           })}
         </nav>
-
-        {/* フッター部分 */}
-        <div className="mt-auto p-6 border-t border-white">
-          <p className="text-sm text-white text-center">
-            © 2026 Sudo
-          </p>
-        </div>
       </div>
     </header>
   );

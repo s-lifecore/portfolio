@@ -7,7 +7,7 @@ const CustomFooter = ({ children, className = "" }) => {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     {/* 左側: コピーライト */}
                     <div className="text-center md:text-left">
-                        <p className="font-playfair text-lg font-semibold text-gray-800 dark:text-white mb-1">
+                        <p className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
                             ©2026 Sudo
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
