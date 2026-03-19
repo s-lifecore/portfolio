@@ -1,6 +1,9 @@
 import { Inter, JetBrains_Mono, Poppins, Playfair_Display, Pacifico } from "next/font/google";
 import "../styles/globals.css";
 
+import Header from "../components/Header";
+import CustomFooter from "../components/CustomFooter";
+
 // フォントを読み込む
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const jetBrainsMono = JetBrains_Mono({ variable: "--font-jetbrains-mono", subsets: ["latin"] });
@@ -19,8 +22,12 @@ export default function RootLayout({ children }) {
       <head>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="c58f65b0-74c9-4768-aec4-98669b72d129"></script>
       </head>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 pt-20">
+          {children}
+        </main>
+        <CustomFooter />
       </body>
     </html>
   );
