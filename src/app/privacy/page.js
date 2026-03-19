@@ -2,7 +2,6 @@
 import CustomH2 from "@/components/CustomH2";
 import Privacy_div from "@/components/Privacy";
 import CustomHeader from "@/components/Header";
-import CustomFooter from "@/components/CustomFooter";
 import { useRouter } from "next/navigation";
 
 const PrivacyPolicy = () => {
@@ -55,7 +54,6 @@ const PrivacyPolicy = () => {
                         前のページへ戻る
                     </button>
                 </div>
-                <CustomFooter />
             </main>
         </>
     );

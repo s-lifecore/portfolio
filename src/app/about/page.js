@@ -2,7 +2,6 @@
 
 import Header from "@/components/Header";
 import { useState } from "react";
-import CustomFooter from "@/components/CustomFooter";
 import "../../styles/globals.css";
 import Head from "next/head";
 
@@ -152,8 +151,6 @@ export default function AboutPage() {
         </ToggleSection>
       </main>
 
-      {/* フッター */}
-      <CustomFooter className="item-align-bottom" />
     </>
   );
 }

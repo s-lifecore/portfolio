@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import CustomFooter from "@/components/CustomFooter";
 import "../../styles/globals.css";
 
 const aboutData = {
@@ -67,8 +66,6 @@ export default function AboutPage() {
                 </ToggleSection>
 
             </main>
-            {/* フッター */}
-            <CustomFooter className="item-align-bottom" />
         </>
     );
 }

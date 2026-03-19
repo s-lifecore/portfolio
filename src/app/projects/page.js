@@ -1,4 +1,3 @@
-import CustomFooter from "@/components/CustomFooter";
 import "../../styles/globals.css";
 import Header from "@/components/Header";
 
@@ -268,7 +267,6 @@ export default function ProjectsPage() {
           </div>
         </div>
       </main>
-      <CustomFooter />
     </>
   );
 }

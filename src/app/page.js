@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import "../styles/globals.css";
-import CustomFooter from "@/components/CustomFooter";
 import Link from "next/link";
 
 export default function Home() {
@@ -13,7 +12,7 @@ export default function Home() {
       <main className="flex flex-col flex-grow items-center justify-center text-center p-8 sm:p-20 pt-24">
         <div className="max-w-4xl mx-auto">
           <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6 bg-gradient-to-r from-blue-500 via-pink-400 to-pink-500 bg-clip-text text-transparent animate-gradient">
-            Sudo's Portfolio
+            Sudo&apos;s Portfolio
           </h1>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 sm:p-12 mb-8 transform hover:scale-105 transition-all duration-300">
@@ -59,7 +58,6 @@ export default function Home() {
         </div>
       </main>
 
-      <CustomFooter />
     </div>
   );
 }
