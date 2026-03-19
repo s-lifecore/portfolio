@@ -23,9 +23,9 @@ const aboutData = {
   },
   socialMedia: [
     { platform: "Twitter", link: "https://twitter.com/ocean_t_umi/" },
-    { platform: "note", link: "https://note.com/s-taku0502" },
-    { platform: "Qiita", link: "https://qiita.com/s-taku0502" },
-    { platform: "Zenn", link: "https://zenn.dev/s-taku0502" },
+    { platform: "note", link: "https://note.com/link_sudo" },
+    { platform: "Qiita", link: "https://qiita.com/takumi1227" },
+    { platform: "Zenn", link: "https://zenn.dev/sudo_dev" },
     { platform: "GitHub", link: "https://github.com/s-taku0502" },
     { platform: "Gist", link: "https://gist.github.com/s-taku0502" },
   ],
