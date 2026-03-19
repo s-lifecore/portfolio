@@ -19,6 +19,7 @@ async function writeEvents(events) {
 
 export async function GET() {
     const events = await readEvents();
+    events.sort((a, b) => new Date(b.date) - new Date(a.date));
     return NextResponse.json(events);
 }
 

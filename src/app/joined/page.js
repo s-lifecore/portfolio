@@ -8,6 +8,7 @@ export default async function JoinedPage() {
     try {
         const raw = await fs.readFile(jsonPath, 'utf-8');
         events = JSON.parse(raw);
+        events.sort((a, b) => new Date(b.date) - new Date(a.date));
     } catch (e) {
         events = [];
     }

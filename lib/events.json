@@ -1,27 +1,20 @@
 [
-    {
-        "title": "こんにちは",
-        "date": "2026-04-01",
-        "description": "",
-        "tags": [],
-        "id": "e1773895286344"
-    },
-    {
-        "title": "ああ",
-        "date": "2025-05-02",
-        "description": "サンプル",
-        "tags": [
-            "participated"
-        ],
-        "id": "e1773895239799"
-    },
-    {
-        "title": "サンプル",
-        "date": "2026-03-19",
-        "description": "このような感じで、今後追加していきます。",
-        "tags": [
-            "participated"
-        ],
-        "id": "e1773894107798"
-    }
+  {
+    "title": "ああ",
+    "date": "2025-05-02",
+    "description": "サンプル",
+    "tags": [
+      "participated"
+    ],
+    "id": "e1773895239799"
+  },
+  {
+    "title": "サンプル",
+    "date": "2026-03-19",
+    "description": "このような感じで、今後追加していきます。",
+    "tags": [
+      "participated"
+    ],
+    "id": "e1773894107798"
+  }
 ]

@@ -13,7 +13,8 @@ export default function AdminEventsClient() {
     async function load() {
         const res = await fetch('/api/events');
         const data = await res.json();
-        setEvents(data);
+        const sorted = (data || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+        setEvents(sorted);
     }
 
     useEffect(() => { load(); }, []);
