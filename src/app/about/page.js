@@ -18,8 +18,8 @@ const aboutData = {
     インフラ: ["Docker", "Vercel", "Cloudflare", "GitHub Pages"],
   },
   projects: {
-    description: "GitHubにて公開している制作物の一覧です。制作終了段階まではGitHubのリポジトリを非公開にしています。制作物は随時更新していきます。",
-    link: "https://github.com/s-taku0502/"
+    description: "GitHubにて公開している制作物の一覧です。制作物は随時更新していきます。",
+    link: "https://s-taku0502.github.io/portfolio-projects/" // 制作品一覧ページへのリンク
   },
   socialMedia: [
     { platform: "Twitter", link: "https://twitter.com/ocean_t_umi/" },
