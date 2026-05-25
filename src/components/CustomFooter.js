@@ -39,7 +39,7 @@ const CustomFooter = ({ children, className = "" }) => {
                         </CustomLink>
                         
                         <CustomLink 
-                            href="https://github.com/s-taku0502" 
+                            href="https://github.com/s-lifecore" 
                             external
                             className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-gray-800 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:bg-gray-700"
                         >

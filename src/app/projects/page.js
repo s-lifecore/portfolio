@@ -95,7 +95,7 @@ const projects = [
   {
     title: "Markdownコンバータ",
     description: "Markdown形式のテキストをPDFに変換するツールです。",
-    link: "https://github.com/s-taku0502/markdown_converter",
+    link: "https://github.com/s-lifecore/markdown_converter",
     status: "GitHub公開中",
     start: "2025/07/27",
     update: "#",

@@ -6,7 +6,7 @@ import "../../styles/globals.css";
 const aboutData = {
     tech: [
         { name: "Qiita", link: "https://qiita.com/takumi1227" },
-        { name: "GitHub", link: "https://github.com/s-taku0502?tab=repositories" },
+        { name: "GitHub", link: "https://github.com/s-lifecore?tab=repositories" },
     ],
     sns: [
         { name: "X(Twitter)", link: "https://x.com/ocean_t_umi" },

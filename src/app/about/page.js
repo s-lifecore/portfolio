@@ -18,15 +18,15 @@ const aboutData = {
   },
   projects: {
     description: "GitHubにて公開している制作物の一覧です。制作物は随時更新していきます。",
-    link: "https://s-taku0502.github.io/portfolio-projects/" // 制作品一覧ページへのリンク
+    link: "https://s-lifecore.github.io/portfolio-projects/" // 制作品一覧ページへのリンク
   },
   socialMedia: [
     { platform: "Twitter", link: "https://twitter.com/ocean_t_umi/" },
     { platform: "note", link: "https://note.com/link_sudo" },
     { platform: "Qiita", link: "https://qiita.com/takumi1227" },
     { platform: "Zenn", link: "https://zenn.dev/sudo_dev" },
-    { platform: "GitHub", link: "https://github.com/s-taku0502" },
-    { platform: "Gist", link: "https://gist.github.com/s-taku0502" },
+    { platform: "GitHub", link: "https://github.com/s-lifecore" },
+    { platform: "Gist", link: "https://gist.github.com/s-lifecore" },
   ],
   extracurricular: [
     { name: "CirKitプロジェクト / 株式会社CirKit", link: "https://cirkit.jp/" },
