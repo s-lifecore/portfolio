@@ -30,6 +30,7 @@ const aboutData = {
   ],
   extracurricular: [
     { name: "CirKitプロジェクト / 株式会社CirKit", link: "https://cirkit.jp/" },
+    { name: "GDSC KIT / GDGoC KIT", link: "https://gdg.community.dev/gdg-on-campus-kanazawa-institute-of-technology-ishikawa-japan/"},
     { name: "情報セキュリティ・スキルアップ・プロジェクト", link: "https://www2.kanazawa-it.ac.jp/kitsec/" },
     { name: "教職課程", link: "https://www.kanazawa-it.ac.jp/kyoshoku/tlp/index.html" },
     { name: "KIT DevelopersHub", link: "#" },
@@ -43,6 +44,13 @@ const aboutData = {
         { period: "2024年11月 - 現在", position: "学内アンケートウェブアプリ「SAKITO」チーム" },
         { period: "2025年度", position: "新人採用（エンジニア職担当）" },
         { period: "2025年度", position: "エンジニア研修 メンターリーダー" },
+      ]
+    },
+    {
+      company: "GDSC KIT / GDGoC KIT",
+      detail: [
+	{ period: "2024年4月 - 2026年5月", position: "member"},
+	{ period: "2026年5月 - 現在", position: "Organizer"},
       ]
     },
     {
