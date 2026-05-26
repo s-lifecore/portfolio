@@ -30,7 +30,10 @@ const aboutData = {
   ],
   extracurricular: [
     { name: "CirKitプロジェクト / 株式会社CirKit", link: "https://cirkit.jp/" },
-    { name: "情報セキュリティ・スキルアップ・プロジェクト", link: "https://www2.kanazawa-it.ac.jp/kitsec/" }
+    { name: "情報セキュリティ・スキルアップ・プロジェクト", link: "https://www2.kanazawa-it.ac.jp/kitsec/" },
+    { name: "教職課程", link: "https://www.kanazawa-it.ac.jp/kyoshoku/tlp/index.html" },
+    { name: "KIT DevelopersHub", link: "#" },
+    { name: "防災・減災プロジェクトSoRA", link : "https://sora2kit.wixsite.com/-----------sora" },
   ],
   workExperience: [
     {
@@ -38,16 +41,35 @@ const aboutData = {
       details: [
         { period: "2024年5月 - 2024年10月", position: "研修生" },
         { period: "2024年11月 - 現在", position: "学内アンケートウェブアプリ「SAKITO」チーム" },
-        // { period: "2025年度", position: "新人採用（エンジニア職担当）" },
-        // { period: "2025年度", position: "エンジニア研修 メンターリーダー" }
+        { period: "2025年度", position: "新人採用（エンジニア職担当）" },
+        { period: "2025年度", position: "エンジニア研修 メンターリーダー" },
       ]
     },
     {
       company: "情報セキュリティ・スキルアップ・プロジェクト",
       details: [
-        { period: "2024年4月 - 現在", position: "メンバー" }
+        { period: "2024年4月 - 現在", position: "メンバー" },
       ]
-    }
+    },
+    {
+      company: "教職課程",
+      details: [
+        { period: "2024年4月 - 2026年5月", position: "教職課程履修生" },
+      ]
+    },
+    {
+      company: "KIT DevelopersHub",
+      details: [
+        { period: "2026年3月 - 現在", position: "イベント運営メンバー" },
+        { period: "2026年4月 - 現在", position: "開発メンバー" },
+      ]
+    },
+    {
+      company: "防災・減災プロジェクトSoRA",
+      details: [
+        { period: "2026年5月 - 現在", position: "メンバー" }
+      ]
+    },
   ]
 };
 
