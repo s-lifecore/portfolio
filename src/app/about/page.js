@@ -48,7 +48,7 @@ const aboutData = {
     },
     {
       company: "GDSC KIT / GDGoC KIT",
-      detail: [
+      details: [
 	{ period: "2024年4月 - 2026年5月", position: "member"},
 	{ period: "2026年5月 - 現在", position: "Organizer"},
       ]
