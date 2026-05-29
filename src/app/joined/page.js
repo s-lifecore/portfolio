@@ -1,11 +1,10 @@
 import EventsView from "../../components/EventsView";
-import { ensureDb, listEvents } from "@/lib/eventsFirestore";
+import { listEvents } from "@/lib/eventsMarkdown";
 
 export default async function JoinedPage() {
     let events = [];
     try {
-        const db = ensureDb();
-        events = await listEvents(db);
+        events = listEvents();
     } catch (e) {
         events = [];
     }
