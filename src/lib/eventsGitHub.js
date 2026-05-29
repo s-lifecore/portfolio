@@ -23,7 +23,7 @@ function getConfig() {
     return { token, owner, repo, branch };
 }
 
-function headers(token) {
+function buildHeaders(token) {
     return {
         Authorization: `Bearer ${token}`,
         Accept: 'application/vnd.github+json',
@@ -33,23 +33,11 @@ function headers(token) {
 }
 
 /**
- * リポジトリ内のファイルのSHAを取得する（更新時に必要）
- */
-async function getFileSha(owner, repo, branch, filePath, token) {
-    const url = `${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
-    const res = await fetch(url, { headers: headers(token) });
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error(`GitHub API エラー (SHA取得): ${res.status}`);
-    const data = await res.json();
-    return data.sha || null;
-}
-
-/**
- * content/events/ 以下のファイル一覧を取得する
+ * content/events/ 以下のファイル一覧を取得する（SHA付き）
  */
 async function listEventFiles(owner, repo, branch, token) {
     const url = `${GITHUB_API}/repos/${owner}/${repo}/contents/content/events?ref=${branch}`;
-    const res = await fetch(url, { headers: headers(token) });
+    const res = await fetch(url, { headers: buildHeaders(token) });
     if (res.status === 404) return [];
     if (!res.ok) throw new Error(`GitHub API エラー (一覧取得): ${res.status}`);
     const files = await res.json();
@@ -57,15 +45,26 @@ async function listEventFiles(owner, repo, branch, token) {
 }
 
 /**
- * ファイルの内容をBase64デコードして返す
+ * ファイルの内容（Base64デコード済み）とSHAを取得する
  */
-async function getFileContent(owner, repo, branch, filePath, token) {
+async function getFileInfo(owner, repo, branch, filePath, token) {
     const url = `${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
-    const res = await fetch(url, { headers: headers(token) });
-    if (!res.ok) return null;
+    const res = await fetch(url, { headers: buildHeaders(token) });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`GitHub API エラー (ファイル取得): ${res.status}`);
     const data = await res.json();
-    if (!data.content) return null;
-    return Buffer.from(data.content, 'base64').toString('utf-8');
+    return {
+        sha: data.sha,
+        content: data.content ? Buffer.from(data.content, 'base64').toString('utf-8') : '',
+    };
+}
+
+/**
+ * gray-matter なしで Frontmatter の特定フィールドを取得する（サーバーレス環境向け簡易パーサー）
+ */
+function extractFrontmatterField(content, field) {
+    const match = content.match(new RegExp(`^${field}:\\s*"([^"]*)"`, 'm'));
+    return match ? match[1] : null;
 }
 
 /**
@@ -103,11 +102,42 @@ function buildMarkdownContent(eventData, createdAt) {
 }
 
 /**
- * gray-matter なしで Frontmatter の特定フィールドを取得する（サーバーレス環境向け簡易パーサー）
+ * GitHub API でファイルを PUT（作成 or 上書き）する
  */
-function extractFrontmatterField(content, field) {
-    const match = content.match(new RegExp(`^${field}:\\s*"([^"]*)"`, 'm'));
-    return match ? match[1] : null;
+async function putFile(owner, repo, branch, filePath, content, sha, commitMessage, token) {
+    const encoded = Buffer.from(content).toString('base64');
+    const body = {
+        message: commitMessage,
+        content: encoded,
+        branch,
+        ...(sha ? { sha } : {}),
+    };
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: buildHeaders(token),
+        body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(`GitHub API エラー (ファイル保存): ${res.status} - ${err.message || JSON.stringify(err)}`);
+    }
+    return res;
+}
+
+/**
+ * GitHub API でファイルを DELETE する
+ */
+async function deleteFile(owner, repo, branch, filePath, sha, commitMessage, token) {
+    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}`, {
+        method: 'DELETE',
+        headers: buildHeaders(token),
+        body: JSON.stringify({ message: commitMessage, sha, branch }),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(`GitHub API エラー (ファイル削除): ${res.status} - ${err.message || JSON.stringify(err)}`);
+    }
+    return res;
 }
 
 /**
@@ -116,6 +146,7 @@ function extractFrontmatterField(content, field) {
 export async function saveEventToGitHub(eventData) {
     const { token, owner, repo, branch } = getConfig();
     const now = new Date().toISOString();
+
     let id = eventData.id;
     const isCreate = !id;
     if (!id) {
@@ -123,79 +154,57 @@ export async function saveEventToGitHub(eventData) {
         eventData = { ...eventData, id };
     }
 
-    const date = eventData.date || new Date().toISOString().split('T')[0];
-    const newFilePath = `content/events/${date}-${id}.md`;
+    const newDate = eventData.date || new Date().toISOString().split('T')[0];
+    const newFilePath = `content/events/${newDate}-${id}.md`;
 
-    // 既存ファイルを探す（更新時）
     let existingFilePath = null;
     let existingCreatedAt = now;
     let existingSha = null;
 
+    // 更新の場合: 既存ファイルを ID で探す
     if (!isCreate) {
         const files = await listEventFiles(owner, repo, branch, token);
-        for (const f of files) {
-            if (f.name.includes(id)) {
-                existingFilePath = `content/events/${f.name}`;
-                existingSha = f.sha;
-                // createdAt を取得
-                const rawContent = await getFileContent(owner, repo, branch, existingFilePath, token);
-                if (rawContent) {
-                    existingCreatedAt = extractFrontmatterField(rawContent, 'createdAt') || now;
-                }
-                break;
+        const match = files.find((f) => f.name.includes(id));
+        if (match) {
+            existingFilePath = `content/events/${match.name}`;
+            // ファイルの内容と SHA を一度の API コールで取得
+            const info = await getFileInfo(owner, repo, branch, existingFilePath, token);
+            if (info) {
+                existingSha = info.sha;
+                existingCreatedAt = extractFrontmatterField(info.content, 'createdAt') || now;
             }
         }
     }
 
     const fileContent = buildMarkdownContent(eventData, existingCreatedAt);
-    const encoded = Buffer.from(fileContent).toString('base64');
 
-    // 日付変更でファイル名が変わる場合は古いファイルを削除
+    // 日付変更でファイル名が変わる場合: 旧ファイルを削除してから新ファイルを作成
     if (existingFilePath && existingFilePath !== newFilePath) {
-        await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${existingFilePath}`, {
-            method: 'DELETE',
-            headers: headers(token),
-            body: JSON.stringify({
-                message: `chore: rename event file for ${id}`,
-                sha: existingSha,
-                branch,
-            }),
-        });
-        existingSha = null; // 新しいファイルとして作成
-    }
-
-    // 新しいファイルのSHAを取得（ファイル名が変わっていない更新の場合）
-    if (!existingSha && existingFilePath === newFilePath) {
-        existingSha = await getFileSha(owner, repo, branch, newFilePath, token);
-    }
-    if (!existingSha && existingFilePath !== newFilePath) {
-        existingSha = await getFileSha(owner, repo, branch, newFilePath, token);
-    }
-
-    const body = {
-        message: isCreate
-            ? `feat: add event "${eventData.title}"`
-            : `chore: update event "${eventData.title}"`,
-        content: encoded,
-        branch,
-        ...(existingSha ? { sha: existingSha } : {}),
-    };
-
-    const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${newFilePath}`, {
-        method: 'PUT',
-        headers: headers(token),
-        body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(`GitHub API エラー (ファイル保存): ${res.status} - ${err.message || ''}`);
+        await deleteFile(
+            owner, repo, branch,
+            existingFilePath,
+            existingSha,
+            `chore: rename event file for ${id}`,
+            token
+        );
+        // 新ファイルは新規作成なので sha 不要
+        await putFile(owner, repo, branch, newFilePath, fileContent, null,
+            `chore: update event "${eventData.title}"`, token);
+    } else {
+        // 同じファイル名での上書き（sha が必要）or 新規作成（sha 不要）
+        await putFile(owner, repo, branch, newFilePath, fileContent,
+            existingSha || null,
+            isCreate
+                ? `feat: add event "${eventData.title}"`
+                : `chore: update event "${eventData.title}"`,
+            token
+        );
     }
 
     return {
         id,
         title: eventData.title || '',
-        date,
+        date: newDate,
         description: eventData.description || '',
         tags: Array.isArray(eventData.tags) ? eventData.tags : [],
         host: eventData.host || '',
@@ -213,24 +222,12 @@ export async function saveEventToGitHub(eventData) {
 export async function deleteEventFromGitHub(id) {
     const { token, owner, repo, branch } = getConfig();
     const files = await listEventFiles(owner, repo, branch, token);
-    for (const f of files) {
-        if (f.name.includes(id)) {
-            const filePath = `content/events/${f.name}`;
-            const res = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}`, {
-                method: 'DELETE',
-                headers: headers(token),
-                body: JSON.stringify({
-                    message: `chore: delete event ${id}`,
-                    sha: f.sha,
-                    branch,
-                }),
-            });
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(`GitHub API エラー (ファイル削除): ${res.status} - ${err.message || ''}`);
-            }
-            return true;
-        }
-    }
-    return false;
+    const match = files.find((f) => f.name.includes(id));
+    if (!match) return false;
+
+    const filePath = `content/events/${match.name}`;
+    // SHA は listEventFiles の結果に含まれているのでそのまま使う
+    await deleteFile(owner, repo, branch, filePath, match.sha,
+        `chore: delete event ${id}`, token);
+    return true;
 }
