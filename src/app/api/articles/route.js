@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchQiitaArticles, fetchRssArticles } from '@/lib/fetchArticles';
+import { fetchQiitaArticles, fetchRssArticles } from '../../../lib/fetchArticles';
 
 export async function GET() {
     try {

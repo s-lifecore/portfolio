@@ -3,6 +3,7 @@ import "../styles/globals.css";
 
 import Header from "../components/Header";
 import CustomFooter from "../components/CustomFooter";
+import Script from 'next/script';
 
 // フォントを読み込む
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -20,7 +21,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ja" className={`${inter.variable} ${jetBrainsMono.variable} ${poppins.variable} ${playfairDisplay.variable} ${pacifico.variable}`}>
       <head>
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="c58f65b0-74c9-4768-aec4-98669b72d129"></script>
+        <Script
+          src="https://cloud.umami.is/script.js"
+          strategy="afterInteractive"
+          data-website-id="c58f65b0-74c9-4768-aec4-98669b72d129"
+        />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
         <Header />

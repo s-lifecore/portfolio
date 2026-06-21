@@ -1,5 +1,5 @@
 import "../../styles/globals.css";
-import Header from "@/components/Header";
+import Header from "../../components/Header";
 
 /*
 "/": "status=[公開中, 限定公開中, 公開停止中, 制作中, GitHub公開中]のいずれかを指定します。公開中の場合はリンクが有効になります。",

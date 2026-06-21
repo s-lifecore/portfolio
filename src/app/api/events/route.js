@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { listEvents, saveEventToFile, deleteEventFile } from '@/lib/eventsMarkdown';
-import { saveEventToGitHub, deleteEventFromGitHub } from '@/lib/eventsGitHub';
+import { listEvents, saveEventToFile, deleteEventFile } from '../../../lib/eventsMarkdown';
+import { saveEventToGitHub, deleteEventFromGitHub } from '../../../lib/eventsGitHub';
 
 const isDev = process.env.NODE_ENV === 'development';
 

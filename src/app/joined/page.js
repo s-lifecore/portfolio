@@ -1,5 +1,5 @@
 import EventsView from "../../components/EventsView";
-import { listEvents } from "@/lib/eventsMarkdown";
+import { listEvents } from "../../lib/eventsMarkdown";
 
 export default async function JoinedPage() {
     let events = [];

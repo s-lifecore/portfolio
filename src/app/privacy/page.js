@@ -1,7 +1,7 @@
 "use client";
-import CustomH2 from "@/components/CustomH2";
-import Privacy_div from "@/components/Privacy";
-import CustomHeader from "@/components/Header";
+import CustomH2 from "../../components/CustomH2";
+import Privacy_div from "../../components/Privacy";
+import CustomHeader from "../../components/Header";
 import { useRouter } from "next/navigation";
 
 const PrivacyPolicy = () => {

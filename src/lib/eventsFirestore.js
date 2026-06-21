@@ -1,5 +1,5 @@
 import admin from "firebase-admin";
-import getFirestore from "@/lib/firebaseAdmin";
+import getFirestore from "./firebaseAdmin";
 
 function normalizeDate(value) {
     if (value && typeof value === "object" && typeof value.toDate === "function") {

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchQiitaArticles, fetchRssArticles } from '@/lib/fetchArticles';
-import Header from '@/components/Header';
-import { formatDate, getBadgeColor } from '@/utils/formatters';
+import { fetchQiitaArticles, fetchRssArticles } from '../../../lib/fetchArticles';
+import Header from '../../../components/Header';
+import { formatDate, getBadgeColor } from '../../../utils/formatters';
 import '../../../styles/globals.css';
 import Link from 'next/link';
 
