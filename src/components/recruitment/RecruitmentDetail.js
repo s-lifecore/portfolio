@@ -1,3 +1,6 @@
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 export default function RecruitmentDetail({ item }) {
     return (
         <div className="space-y-6">
@@ -6,15 +9,13 @@ export default function RecruitmentDetail({ item }) {
             <p className="text-sm text-gray-500">{item.category} · {item.location} · {item.createdAt}</p>
 
             <div className="prose">
-                {item.description.split(/\n\n+/).map((para, i) => (
-                    <p key={i}>{para}</p>
-                ))}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.description || ''}</ReactMarkdown>
             </div>
 
             <div>
                 <h2 className="text-lg font-semibold">応募条件</h2>
                 <ul className="list-disc ml-6 mt-2">
-                    {item.requirements.map((r) => (
+                    {(item.requirements || []).map((r) => (
                         <li key={r}>{r}</li>
                     ))}
                 </ul>
@@ -23,7 +24,7 @@ export default function RecruitmentDetail({ item }) {
             <div>
                 <h2 className="text-lg font-semibold">歓迎スキル</h2>
                 <ul className="list-disc ml-6 mt-2">
-                    {item.welcomeSkills.map((s) => (
+                    {(item.welcomeSkills || []).map((s) => (
                         <li key={s}>{s}</li>
                     ))}
                 </ul>
