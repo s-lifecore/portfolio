@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { getTemplateForCategory } from '../lib/recruitmentTemplates';
 import Link from "next/link";
 
 export default function AdminRecruitmentsClient() {
@@ -14,6 +15,9 @@ export default function AdminRecruitmentsClient() {
     const [category, setCategory] = useState("");
     const [location, setLocation] = useState("");
     const [description, setDescription] = useState("");
+    const [descriptionPlaceholder, setDescriptionPlaceholder] = useState('');
+    const [templateOptions, setTemplateOptions] = useState([]);
+    const [showTemplatePicker, setShowTemplatePicker] = useState(false);
     const [requirements, setRequirements] = useState("");
     const [welcomeSkills, setWelcomeSkills] = useState("");
     const [editingId, setEditingId] = useState(null);
@@ -27,6 +31,42 @@ export default function AdminRecruitmentsClient() {
     }
 
     useEffect(() => { load(); }, []);
+
+    async function fetchTemplateList() {
+        const res = await fetch('/api/templates');
+        if (!res.ok) return;
+        const data = await res.json();
+        setTemplateOptions(Array.isArray(data) ? data : []);
+    }
+
+    async function insertTemplate(id) {
+        if (!id) return;
+        if (description && description.trim().length > 0) {
+            const ok = confirm('現在の本文を上書きします。よろしいですか？（キャンセルで追記）');
+            if (!ok) {
+                // append
+                const resA = await fetch(`/api/templates?id=${id}`);
+                if (!resA.ok) return;
+                const d = await resA.json();
+                setDescription((prev) => prev + '\n\n' + (d.content || ''));
+                setShowTemplatePicker(false);
+                return;
+            }
+        }
+        const res = await fetch(`/api/templates?id=${id}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setDescription(data.content || '');
+        setShowTemplatePicker(false);
+    }
+
+    // update placeholder template when category changes (only for new entries)
+    useEffect(() => {
+        if (editingId) return; // skip when editing existing
+        if (description && description.trim().length > 0) return; // don't override filled description
+        const tpl = getTemplateForCategory(category);
+        setDescriptionPlaceholder(tpl || '');
+    }, [category, editingId, description]);
 
     const categoryOptions = Array.from(new Set(items.map(it => (it.category || '').trim()).filter(Boolean)));
     const categoryRef = useRef(null);
@@ -142,8 +182,25 @@ export default function AdminRecruitmentsClient() {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium">本文（Markdown） <span className="ml-2 text-sm text-gray-500">(任意)</span></label>
-                    <textarea className="mt-1 w-full border rounded px-3 py-2 placeholder-gray-400" rows={4} value={description} onChange={(e)=>setDescription(e.target.value)} placeholder={`例:\n- 仕事の内容\n- 応募方法`} />
+                    <div className="flex items-center justify-between">
+                        <label className="block text-sm font-medium">本文（Markdown） <span className="ml-2 text-sm text-gray-500">(任意)</span></label>
+                        <div className="flex items-center space-x-2">
+                            <button type="button" onClick={async ()=>{ await fetchTemplateList(); setShowTemplatePicker(!showTemplatePicker); }} className="text-sm px-2 py-1 bg-gray-100 rounded">テンプレートを挿入</button>
+                        </div>
+                    </div>
+                    {showTemplatePicker && (
+                        <div className="mt-2 mb-2 border rounded p-2 bg-white max-h-48 overflow-auto">
+                            {templateOptions.length === 0 && <div className="text-sm text-gray-500">テンプレートがありません</div>}
+                            <ul className="space-y-1">
+                                {templateOptions.map(t => (
+                                    <li key={t.id} className="flex items-center justify-between">
+                                        <button type="button" onClick={()=>insertTemplate(t.id)} className="text-left px-2 py-1 hover:bg-gray-50 w-full">{t.id}</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <textarea className="mt-1 w-full border rounded px-3 py-2 placeholder-gray-400" rows={10} value={description} onChange={(e)=>setDescription(e.target.value)} placeholder={descriptionPlaceholder || `例:\n- 仕事の内容\n- 応募方法`} />
                 </div>
                 <div>
                     <label className="block text-sm font-medium">応募条件（改行で複数） <span className="ml-2 text-sm text-gray-500">(任意)</span></label>
