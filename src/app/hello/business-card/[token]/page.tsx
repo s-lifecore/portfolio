@@ -137,7 +137,7 @@ export default async function BusinessCardPage({ params }: PageProps) {
                         </div>
                         <div>
                             <p className="font-bold text-gray-800 flex items-center gap-1">
-                                <span className="text-pink-500">🚀</span> Hackit
+                                <span className="text-pink-500">🚀</span> KIT DevelopersHub & GDGoC KIT
                             </p>
                             <p className="text-gray-500 scale-95 origin-left">~ Student Hackathon Organizer ~</p>
                             <p className="mt-0.5 text-gray-600">学生向けハッカソンの企画・運営や、学内外の技術コミュニティ活動。</p>
