@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import InteractiveSafetySection from "@/components/InteractiveSafetySection";
+import InteractiveSafetySection from "../../../../components/InteractiveSafetySection";
 
 export const metadata: Metadata = {
     title: "Business Card | sudo",
