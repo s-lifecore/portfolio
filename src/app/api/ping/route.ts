@@ -36,7 +36,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 3. ログをMarkdown形式で記録（DMD構想に基づく）
     const logEntry = `
-## Ping Report - ${new Date(timestamp).toLocaleString('ja-JP')}
+## Ping Report - ${new Date(timestamp).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}
 
 - **Timestamp**: ${timestamp}
 - **Active Schedules**: ${activeSchedules?.length || 0}

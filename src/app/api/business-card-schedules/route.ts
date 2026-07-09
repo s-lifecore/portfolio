@@ -37,8 +37,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // 管理者認証チェック
-    const adminToken = request.headers.get('x-admin-token');
-    if (adminToken !== process.env.ADMIN_PASSWORD) {
+    const adminCookie = request.cookies.get('admin')?.value;
+    if (adminCookie !== '1') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -85,8 +85,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
     // 管理者認証チェック
-    const adminToken = request.headers.get('x-admin-token');
-    if (adminToken !== process.env.ADMIN_PASSWORD) {
+    const adminCookie = request.cookies.get('admin')?.value;
+    if (adminCookie !== '1') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -131,8 +131,8 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
     // 管理者認証チェック
-    const adminToken = request.headers.get('x-admin-token');
-    if (adminToken !== process.env.ADMIN_PASSWORD) {
+    const adminCookie = request.cookies.get('admin')?.value;
+    if (adminCookie !== '1') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

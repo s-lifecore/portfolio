@@ -18,7 +18,9 @@ interface SafetyData {
  */
 async function getLocationFromIP(ip: string): Promise<{ city: string; prefecture: string } | null> {
   try {
-    const response = await fetch(`https://ipapi.co/${ip}/json/`);
+    const response = await fetch(`https://ipapi.co/${ip}/json/`, {
+      signal: AbortSignal.timeout(3000),
+    });
     if (!response.ok) return null;
     const data = await response.json();
     return {
@@ -120,7 +122,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
 
     return NextResponse.json(safetyData, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'private, no-store, max-age=0, must-revalidate',
       },
     });
   } catch (error) {

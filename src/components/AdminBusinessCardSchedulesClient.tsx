@@ -61,22 +61,16 @@ export default function AdminBusinessCardSchedulesClient() {
         start_at: startAt,
         end_at: endAt,
         is_active: isActive,
+        ...(editingId ? { id: editingId } : {}),
       };
 
       const method = editingId ? 'PUT' : 'POST';
-      const url = editingId
-        ? '/api/business-card-schedules'
-        : '/api/business-card-schedules';
-
-      if (editingId) {
-        payload.id = editingId;
-      }
+      const url = '/api/business-card-schedules';
 
       const res = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-token': process.env.NEXT_PUBLIC_ADMIN_PASSWORD || '',
         },
         body: JSON.stringify(payload),
       });
@@ -112,9 +106,6 @@ export default function AdminBusinessCardSchedulesClient() {
     try {
       const res = await fetch(`/api/business-card-schedules?id=${id}`, {
         method: 'DELETE',
-        headers: {
-          'x-admin-token': process.env.NEXT_PUBLIC_ADMIN_PASSWORD || '',
-        },
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -131,10 +122,16 @@ export default function AdminBusinessCardSchedulesClient() {
   }
 
   function startEdit(schedule: Schedule) {
+    const toLocalDateTimeString = (isoString: string) => {
+      const date = new Date(isoString);
+      const offset = date.getTimezoneOffset() * 60000;
+      return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+    };
+
     setEditingId(schedule.id);
     setToken(schedule.token);
-    setStartAt(schedule.start_at.slice(0, 16)); // datetime-local形式に変換
-    setEndAt(schedule.end_at.slice(0, 16));
+    setStartAt(toLocalDateTimeString(schedule.start_at));
+    setEndAt(toLocalDateTimeString(schedule.end_at));
     setIsActive(schedule.is_active);
     setSaveError('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
