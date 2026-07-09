@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import DisasterSafetyBanner from "@/components/DisasterSafetyBanner";
 
 export const metadata: Metadata = {
     title: "Business Card | sudo",
@@ -27,7 +28,9 @@ export default async function BusinessCardPage({ params }: PageProps) {
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
+            <div className="w-full max-w-md">
+                <DisasterSafetyBanner />
+                <div className="rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
 
                 {/* プロフィールヘッダー */}
                 <div className="text-center my-4">
@@ -152,6 +155,7 @@ export default async function BusinessCardPage({ params }: PageProps) {
                     </div>
                 </div>
 
+                </div>
             </div>
         </main>
     );

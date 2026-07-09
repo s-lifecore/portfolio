@@ -1,0 +1,49 @@
+name: Disaster Safety System Ping
+
+on:
+  schedule:
+    # 毎時間 0 分に実行
+    - cron: '0 * * * *'
+  # 手動トリガーも可能
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Send ping to disaster safety system
+        env:
+          DEPLOYMENT_URL: ${{ secrets.DEPLOYMENT_URL }}
+          PING_SECRET_TOKEN: ${{ secrets.PING_SECRET_TOKEN }}
+        run: |
+          if [ -z "$DEPLOYMENT_URL" ] || [ -z "$PING_SECRET_TOKEN" ]; then
+            echo "⚠️ Missing environment variables (DEPLOYMENT_URL or PING_SECRET_TOKEN)"
+            exit 1
+          fi
+
+          echo "🔔 Sending ping to disaster safety system..."
+          
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $PING_SECRET_TOKEN" \
+            -H "Content-Type: application/json" \
+            "$DEPLOYMENT_URL/api/ping")
+          
+          echo "Response: $RESPONSE"
+          
+          # レスポンスから ok フィールドを確認
+          OK=$(echo "$RESPONSE" | grep -o '"ok":true' || echo "")
+          
+          if [ -z "$OK" ]; then
+            echo "❌ Ping failed!"
+            exit 1
+          fi
+          
+          echo "✅ Ping successful!"
+
+      - name: Log ping result
+        if: always()
+        run: |
+          echo "Ping completed at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

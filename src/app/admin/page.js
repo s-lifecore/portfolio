@@ -11,6 +11,7 @@ export default function AdminIndex() {
                 <Link href="/admin/events" className="p-6 border rounded hover:bg-gray-50 text-center">イベント管理</Link>
                 <Link href="/admin/recruitments" className="p-6 border rounded hover:bg-gray-50 text-center">募集管理</Link>
                 <Link href="/admin/templates" className="p-6 border rounded hover:bg-gray-50 text-center">テンプレート管理</Link>
+                <Link href="/admin/business-card-schedules" className="p-6 border rounded hover:bg-gray-50 text-center">ビジネスカード スケジュール管理</Link>
             </div>
         </main>
     );
