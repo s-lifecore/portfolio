@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import DisasterSafetyBanner from "../../../../components/DisasterSafetyBanner";
+import InteractiveSafetySection from "../../../../components/InteractiveSafetySection";
 
 export const metadata: Metadata = {
     title: "Business Card | sudo",
@@ -29,18 +29,21 @@ export default async function BusinessCardPage({ params }: PageProps) {
     return (
         <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-md">
-                <DisasterSafetyBanner />
+                <InteractiveSafetySection />
+
                 <div className="rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
 
                 {/* プロフィールヘッダー */}
                 <div className="text-center my-4">
                     <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Takumi Sudo</h1>
-                    <p className="mt-2 text-xs font-semibold text-emerald-700 bg-emerald-50 inline-block px-3 py-1 rounded-full">
-                        Civic Tech & Disaster Tech Developer
-                    </p>
-                    <p className="text-xs font-semibold text-pink-600 bg-pink-50 inline-block px-3 py-1 rounded-full ml-1">
-                        Community Organizer
-                    </p>
+                    <div className="flex flex-wrap justify-center gap-1 mt-2">
+                        <p className="text-xs font-semibold text-emerald-700 bg-emerald-50 inline-block px-3 py-1 rounded-full">
+                            Civic Tech & Disaster Tech Developer
+                        </p>
+                        <p className="text-xs font-semibold text-pink-600 bg-pink-50 inline-block px-3 py-1 rounded-full">
+                            Community Organizer
+                        </p>
+                    </div>
                     <p className="mt-2.5 text-sm text-gray-500">
                         金沢工業大学 情報工学科
                     </p>
@@ -48,9 +51,9 @@ export default async function BusinessCardPage({ params }: PageProps) {
 
                 {/* About Me */}
                 <div className="bg-gray-50/70 rounded-xl p-3.5 text-sm text-gray-600 border border-gray-100">
-                    <p className="font-bold text-gray-800 mb-1">About Me</p>
+                    <p className="font-bold text-gray-800 mb-1 text-xs uppercase tracking-wider">About Me</p>
                     <p className="leading-relaxed text-xs">
-                        情報工学を学ぶ学生エンジニア。IT技術で身近な社会を解決し、持続可能で安心して暮らせる社会を作ることを目指しています。
+                        情報工学を学ぶ学生エンジニア。IT技術で身近な社会課題を解決し、持続可能で安心して暮らせる社会を作ることを目指しています。
                     </p>
                 </div>
 
@@ -58,8 +61,6 @@ export default async function BusinessCardPage({ params }: PageProps) {
 
                 {/* リンク集 */}
                 <div className="space-y-2.5">
-
-                    {/* vCard 連絡先保存ボタン */}
                     <a
                         href="/api/vcard"
                         className="flex items-center justify-between rounded-xl border border-emerald-500 bg-emerald-600 p-3.5 font-bold text-white transition hover:bg-emerald-700 shadow-md text-center"
@@ -103,7 +104,6 @@ export default async function BusinessCardPage({ params }: PageProps) {
                         <span className="text-xs text-gray-400">→</span>
                     </a>
 
-                    {/* 外部サービス */}
                     <div className="pt-1 grid grid-cols-2 gap-2">
                         <a
                             href="https://trim6.onrender.com/VfE3Gw"
@@ -126,7 +126,6 @@ export default async function BusinessCardPage({ params }: PageProps) {
 
                 {/* What's I'm Working On */}
                 <div>
-                    {/* 👇 エラー回避のために安全なエスケープ（{"What's"}）に修正したよ！ */}
                     <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                         {"What's"} I&apos;m Working On
                     </h2>
@@ -136,21 +135,21 @@ export default async function BusinessCardPage({ params }: PageProps) {
                                 <span className="text-emerald-500">🛠️</span> CityRiskView
                             </p>
                             <p className="text-gray-500 scale-95 origin-left">~ Disaster Resilience Platform ~</p>
-                            <p className="mt-0.5 text-gray-600">災害時の迅速な情報共有と、平時の備えを支援する防災プラットフォーム。</p>
+                            <p className="mt-0.5 text-gray-600 leading-relaxed">災害時の迅速な情報共有と、平時の備えを支援する防災プラットフォーム。</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-800 flex items-center gap-1">
                                 <span className="text-pink-500">🚀</span> KIT DevelopersHub & GDGoC KIT
                             </p>
                             <p className="text-gray-500 scale-95 origin-left">~ Student Hackathon Organizer ~</p>
-                            <p className="mt-0.5 text-gray-600">学生向けハッカソンの企画・運営や、学内外の技術コミュニティ活動。</p>
+                            <p className="mt-0.5 text-gray-600 leading-relaxed">学生向けハッカソンの企画・運営や、学内外の技術コミュニティ活動。</p>
                         </div>
                         <div>
                             <p className="font-bold text-gray-800 flex items-center gap-1">
                                 <span className="text-blue-500">🚶</span> Michikusa Memory
                             </p>
                             <p className="text-gray-500 scale-95 origin-left">~ Walking Memory Archive ~</p>
-                            <p className="mt-0.5 text-gray-600">ふとした散歩の時間を冒険に変えるアプリケーション。</p>
+                            <p className="mt-0.5 text-gray-600 leading-relaxed">ふとした散歩の時間を冒険に変えるアプリケーション。</p>
                         </div>
                     </div>
                 </div>

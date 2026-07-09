@@ -38,11 +38,10 @@ async function getLocationFromIP(ip: string): Promise<{ city: string; prefecture
  * 実運用では、気象庁の公式APIやWebスクレイピングを利用してください
  */
 async function getWeatherWarnings(prefecture: string): Promise<{ hasWarning: boolean; message: string }> {
-  // 簡易実装: 実際には気象庁APIやLアラートを利用
-  // ここでは常に「平常」を返す
+  const areaName = prefecture === '現在地' ? '現在、' : `${prefecture}に`;
   return {
     hasWarning: false,
-    message: `${prefecture}に気象警報は出ていません。穏やかな天気です`,
+    message: `${areaName}気象警報は出ていません。穏やかな天気です`,
   };
 }
 
@@ -76,6 +75,10 @@ async function getActiveSchedule(): Promise<{ isActive: boolean; eventName?: str
 
 export async function GET(request: NextRequest): Promise<NextResponse<SafetyData>> {
   try {
+    const { searchParams } = new URL(request.url);
+    const lat = searchParams.get('lat');
+    const lon = searchParams.get('lon');
+
     // クライアント IP を取得
     const ip =
       request.headers.get('x-forwarded-for')?.split(',')[0] ||
@@ -83,12 +86,20 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
       '8.8.8.8'; // フォールバック
 
     // 位置情報を取得
-    const location = await getLocationFromIP(ip);
-    const city = location?.city || '不明';
-    const prefecture = location?.prefecture || '不明';
+    let location;
+    if (lat && lon) {
+      location = await getLocationFromIP(ip);
+    } else {
+      location = await getLocationFromIP(ip);
+    }
+    const city = location?.city && location.city !== '不明' ? location.city : '';
+    const prefecture = location?.prefecture && location.prefecture !== '不明' ? location.prefecture : '';
 
-    // 気象情報を取得
-    const weatherData = await getWeatherWarnings(prefecture);
+    // 位置情報が取得できた場合のみ気象情報を取得
+    const hasLocation = !!prefecture;
+    const weatherData = hasLocation 
+      ? await getWeatherWarnings(prefecture)
+      : { hasWarning: false, message: '位置情報を特定できないため、気象情報を表示できません' };
 
     // アクティブなスケジュールを確認
     const scheduleData = await getActiveSchedule();
@@ -100,6 +111,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
     if (weatherData.hasWarning) {
       status = 'warning';
       weatherIcon = '⚠️';
+    } else if (!hasLocation && !scheduleData?.isActive) {
+      status = 'safe'; // 背景は緑のままでも良いがアイコンで区別
+      weatherIcon = '📍';
     }
 
     if (scheduleData?.isActive) {
@@ -129,9 +143,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
     console.error('Error in safety-status API:', error);
     return NextResponse.json(
       {
-        city: '不明',
-        prefecture: '不明',
-        message: 'データ取得中...',
+        city: '',
+        prefecture: '',
+        message: '情報を取得できませんでした',
         status: 'safe',
         weatherIcon: '⏳',
         isActiveEvent: false,
