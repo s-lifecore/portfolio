@@ -14,13 +14,30 @@ interface SafetyData {
   lastUpdated: string;
 }
 
+interface DisasterSafetyBannerProps {
+  hasConsent: boolean;
+  location?: { lat: number; lon: number };
+}
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function DisasterSafetyBanner() {
-  const { data, error, isLoading } = useSWR<SafetyData>('/api/safety-status', fetcher, {
-    refreshInterval: 300000, // 5分ごとに自動更新
-    revalidateOnFocus: true,
-  });
+export default function DisasterSafetyBanner({ hasConsent, location }: DisasterSafetyBannerProps) {
+  const queryParams = new URLSearchParams();
+  if (location) {
+    queryParams.append('lat', location.lat.toString());
+    queryParams.append('lon', location.lon.toString());
+  }
+
+  const { data, error, isLoading } = useSWR<SafetyData>(
+    hasConsent ? `/api/safety-status?${queryParams.toString()}` : null,
+    fetcher,
+    {
+      refreshInterval: 300000, // 5分ごとに自動更新
+      revalidateOnFocus: true,
+    }
+  );
+
+  if (!hasConsent) return null;
 
   if (isLoading) {
     return (

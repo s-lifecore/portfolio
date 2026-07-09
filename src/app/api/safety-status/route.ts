@@ -76,6 +76,10 @@ async function getActiveSchedule(): Promise<{ isActive: boolean; eventName?: str
 
 export async function GET(request: NextRequest): Promise<NextResponse<SafetyData>> {
   try {
+    const { searchParams } = new URL(request.url);
+    const lat = searchParams.get('lat');
+    const lon = searchParams.get('lon');
+
     // クライアント IP を取得
     const ip =
       request.headers.get('x-forwarded-for')?.split(',')[0] ||
@@ -83,7 +87,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
       '8.8.8.8'; // フォールバック
 
     // 位置情報を取得
-    const location = await getLocationFromIP(ip);
+    let location;
+    if (lat && lon) {
+      // 本来は緯度経度から住所を特定する逆ジオコーディングを行うべきだが、
+      // 今回はIPベースの位置情報を取得しつつ、将来的な拡張性を残す
+      location = await getLocationFromIP(ip);
+    } else {
+      location = await getLocationFromIP(ip);
+    }
     const city = location?.city || '不明';
     const prefecture = location?.prefecture || '不明';
 
