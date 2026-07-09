@@ -87,8 +87,8 @@ export default function DisasterSafetyBanner({ hasConsent, location }: DisasterS
           {data.isActiveEvent ? '🎉 イベント情報' : '📍 あなたの街の安全'}
         </p>
         <p className="text-sm font-semibold leading-tight">
-          {data.prefecture}
-          {data.city !== '不明' && `・${data.city}`}
+          {data.prefecture || '現在地'}
+          {data.city && `・${data.city}`}
         </p>
         <p className="text-xs text-current opacity-90 mt-1">{data.message}</p>
       </div>
