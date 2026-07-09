@@ -16,9 +16,11 @@ export default function ConsentManager({ onConsentChange }: ConsentManagerProps)
     if (!savedConsent) {
       setShowBanner(true);
     } else if (savedConsent === 'granted') {
+      // 初回レンダリング後に一度だけ実行されるようにする
       onConsentChange(true);
     }
-  }, [onConsentChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAccept = () => {
     setIsProcessing(true);

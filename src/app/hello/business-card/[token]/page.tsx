@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import DisasterSafetyBanner from "@/components/DisasterSafetyBanner";
 import ConsentManager from "@/components/ConsentManager";
-import { useState, use } from 'react';
+import { useState, use, useCallback } from 'react';
 
 interface PageProps {
     params: Promise<{
@@ -17,13 +17,25 @@ export default function BusinessCardPage({ params }: PageProps) {
         hasConsent: false
     });
 
+    const handleConsentChange = useCallback((hasConsent: boolean, location?: { lat: number; lon: number }) => {
+        setConsent(prev => {
+            // 状態が変わらない場合は更新しない（無限ループ防止）
+            if (prev.hasConsent === hasConsent && 
+                prev.location?.lat === location?.lat && 
+                prev.location?.lon === location?.lon) {
+                return prev;
+            }
+            return { hasConsent, location };
+        });
+    }, []);
+
     return (
         <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-md">
                 <DisasterSafetyBanner hasConsent={consent.hasConsent} location={consent.location} />
                 
                 <ConsentManager 
-                    onConsentChange={(hasConsent, location) => setConsent({ hasConsent, location })} 
+                    onConsentChange={handleConsentChange} 
                 />
 
                 <div className="rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
