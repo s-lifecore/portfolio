@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import DisasterSafetyBanner from "@/components/DisasterSafetyBanner";
+import DisasterSafetyBanner from "../../../../components/DisasterSafetyBanner";
 
 export const metadata: Metadata = {
     title: "Business Card | sudo",
