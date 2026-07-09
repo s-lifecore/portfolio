@@ -95,8 +95,11 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
     const city = location?.city && location.city !== '不明' ? location.city : '';
     const prefecture = location?.prefecture && location.prefecture !== '不明' ? location.prefecture : '';
 
-    // 気象情報を取得
-    const weatherData = await getWeatherWarnings(prefecture || '現在地');
+    // 位置情報が取得できた場合のみ気象情報を取得
+    const hasLocation = !!prefecture;
+    const weatherData = hasLocation 
+      ? await getWeatherWarnings(prefecture)
+      : { hasWarning: false, message: '位置情報を特定できないため、気象情報を表示できません' };
 
     // アクティブなスケジュールを確認
     const scheduleData = await getActiveSchedule();
@@ -108,6 +111,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<SafetyData
     if (weatherData.hasWarning) {
       status = 'warning';
       weatherIcon = '⚠️';
+    } else if (!hasLocation && !scheduleData?.isActive) {
+      status = 'safe'; // 背景は緑のままでも良いがアイコンで区別
+      weatherIcon = '📍';
     }
 
     if (scheduleData?.isActive) {
