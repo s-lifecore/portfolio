@@ -1,9 +1,15 @@
-'use client';
-
 import { notFound } from "next/navigation";
-import DisasterSafetyBanner from "@/components/DisasterSafetyBanner";
-import ConsentManager from "@/components/ConsentManager";
-import { useState, use, useCallback } from 'react';
+import type { Metadata } from "next";
+import InteractiveSafetySection from "@/components/InteractiveSafetySection";
+
+export const metadata: Metadata = {
+    title: "Business Card | sudo",
+    robots: {
+        index: false,
+        follow: false,
+        nocache: true,
+    },
+};
 
 interface PageProps {
     params: Promise<{
@@ -11,32 +17,19 @@ interface PageProps {
     }>;
 }
 
-export default function BusinessCardPage({ params }: PageProps) {
-    const { token } = use(params);
-    const [consent, setConsent] = useState<{ hasConsent: boolean; location?: { lat: number; lon: number } }>({
-        hasConsent: false
-    });
+export default async function BusinessCardPage({ params }: PageProps) {
+    const { token } = await params;
+    const secretToken = process.env.BUSINESS_CARD_TOKEN;
 
-    const handleConsentChange = useCallback((hasConsent: boolean, location?: { lat: number; lon: number }) => {
-        setConsent(prev => {
-            // 状態が変わらない場合は更新しない（無限ループ防止）
-            if (prev.hasConsent === hasConsent && 
-                prev.location?.lat === location?.lat && 
-                prev.location?.lon === location?.lon) {
-                return prev;
-            }
-            return { hasConsent, location };
-        });
-    }, []);
+    // トークンが一致しない場合は404
+    if (!secretToken || token !== secretToken) {
+        notFound();
+    }
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
             <div className="w-full max-w-md">
-                <DisasterSafetyBanner hasConsent={consent.hasConsent} location={consent.location} />
-                
-                <ConsentManager 
-                    onConsentChange={handleConsentChange} 
-                />
+                <InteractiveSafetySection />
 
                 <div className="rounded-2xl bg-white p-6 shadow-xl border border-gray-100">
 
