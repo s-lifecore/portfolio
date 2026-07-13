@@ -18,7 +18,7 @@ const aboutData = {
   },
   projects: {
     description: "GitHubにて公開している制作物の一覧です。制作物は随時更新していきます。",
-    link: "https://s-lifecore.github.io/portfolio-projects/" // 制作品一覧ページへのリンク
+    // link: "https://s-lifecore.github.io/portfolio-projects/" // 制作品一覧ページへのリンク
   },
   socialMedia: [
     { platform: "Twitter", link: "https://twitter.com/ocean_t_umi/" },
@@ -168,7 +168,8 @@ export default function AboutPage() {
 
         {/* 制作品 */}
         <ToggleSection title="制作品">
-          <p>{aboutData.projects.description} <a href={aboutData.projects.link} className="text-blue-600 dark:text-blue-400">GitHub</a></p>
+          <p>{aboutData.projects.description} </p>
+          {/* <a href={aboutData.projects.link} className="text-blue-600 dark:text-blue-400">GitHub</a></p> */}
         </ToggleSection>
 
         {/* ソーシャルメディア */}
