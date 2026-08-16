@@ -8,6 +8,8 @@
  *   GITHUB_BRANCH  - ブランチ名 (デフォルト: main)
  */
 
+import matter from 'gray-matter';
+
 const GITHUB_API = 'https://api.github.com';
 
 function getConfig() {
@@ -86,6 +88,7 @@ function buildMarkdownContent(eventData, createdAt) {
         ...(eventData.venue ? { venue: eventData.venue } : {}),
         ...(eventData.url ? { url: eventData.url } : {}),
         ...(eventData.reviewUrl ? { reviewUrl: eventData.reviewUrl } : {}),
+        archived: eventData.archived === true,
         createdAt: createdAt || now,
         updatedAt: now,
     };
@@ -95,6 +98,7 @@ function buildMarkdownContent(eventData, createdAt) {
             if (v.length === 0) return `${k}: []`;
             return `${k}:\n${v.map((item) => `  - "${item}"`).join('\n')}`;
         }
+        if (typeof v === 'boolean') return `${k}: ${v}`;
         return `${k}: "${String(v).replace(/"/g, '\\"')}"`;
     });
 
@@ -211,23 +215,46 @@ export async function saveEventToGitHub(eventData) {
         venue: eventData.venue || '',
         url: eventData.url || '',
         reviewUrl: eventData.reviewUrl || '',
+        archived: eventData.archived === true,
         createdAt: existingCreatedAt,
         updatedAt: now,
     };
 }
 
 /**
- * イベントをGitHub経由で削除する
+ * イベントをGitHub経由でアーカイブ/復元する（ファイルは削除せず archived フラグのみ更新）
+ * @param {string} id
+ * @param {boolean} archived
+ * @returns {object|null} 更新後のイベント、見つからなければ null
  */
-export async function deleteEventFromGitHub(id) {
+export async function setEventArchivedOnGitHub(id, archived = true) {
     const { token, owner, repo, branch } = getConfig();
     const files = await listEventFiles(owner, repo, branch, token);
     const match = files.find((f) => f.name.includes(id));
-    if (!match) return false;
+    if (!match) return null;
 
     const filePath = `content/events/${match.name}`;
-    // SHA は listEventFiles の結果に含まれているのでそのまま使う
-    await deleteFile(owner, repo, branch, filePath, match.sha,
-        `chore: delete event ${id}`, token);
-    return true;
+    const info = await getFileInfo(owner, repo, branch, filePath, token);
+    if (!info) return null;
+
+    const parsed = matter(info.content);
+    const eventData = {
+        id,
+        title: parsed.data.title || '',
+        date: parsed.data.date || '',
+        description: parsed.content.trim(),
+        tags: Array.isArray(parsed.data.tags) ? parsed.data.tags : [],
+        host: parsed.data.host || '',
+        venue: parsed.data.venue || '',
+        url: parsed.data.url || '',
+        reviewUrl: parsed.data.reviewUrl || '',
+        archived,
+    };
+
+    const fileContent = buildMarkdownContent(eventData, parsed.data.createdAt);
+    await putFile(owner, repo, branch, filePath, fileContent, info.sha,
+        archived ? `chore: archive event "${eventData.title}"` : `chore: restore event "${eventData.title}"`,
+        token);
+
+    return { ...eventData, createdAt: parsed.data.createdAt, updatedAt: new Date().toISOString() };
 }

@@ -18,10 +18,11 @@ export default function AdminEventsClient() {
     const [url, setUrl] = useState("");
     const [reviewUrl, setReviewUrl] = useState("");
     const [editingId, setEditingId] = useState(null);
+    const [editingArchived, setEditingArchived] = useState(false);
 
     async function load() {
         setLoadError("");
-        const res = await fetch('/api/events');
+        const res = await fetch('/api/events?includeArchived=true');
         const data = await res.json();
         if (!res.ok) {
             setEvents([]);
@@ -43,7 +44,7 @@ export default function AdminEventsClient() {
             const tags = [];
             if (hosted) tags.push('hosted');
             if (participated) tags.push('participated');
-            const payload = { title, date, description, tags };
+            const payload = { title, date, description, tags, archived: editingArchived };
             if (host) payload.host = host;
             if (venue) payload.venue = venue;
             if (url) payload.url = url;
@@ -84,18 +85,22 @@ export default function AdminEventsClient() {
         setTitle(''); setDate(''); setDescription(''); setHosted(false); setParticipated(false);
         setHost(''); setVenue(''); setUrl(''); setReviewUrl('');
         setEditingId(null);
+        setEditingArchived(false);
         setSaveError('');
     }
 
-    async function handleDelete(id) {
-        if (!confirm('削除しますか？')) return;
+    async function handleArchiveToggle(id, archived) {
+        const message = archived
+            ? 'アーカイブしますか？一覧から非表示になりますが、データは残ります。'
+            : '復元しますか？一覧に再表示されます。';
+        if (!confirm(message)) return;
         setSaveError("");
         setSaving(true);
         try {
-            const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE' });
+            const res = await fetch(`/api/events?id=${id}&archived=${archived}`, { method: 'PATCH' });
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
-                setSaveError(data?.error || '削除に失敗しました。');
+                setSaveError(data?.error || (archived ? 'アーカイブに失敗しました。' : '復元に失敗しました。'));
                 return;
             }
             if (editingId === id) clearForm();
@@ -116,6 +121,7 @@ export default function AdminEventsClient() {
         setVenue(ev.venue || '');
         setUrl(ev.url || '');
         setReviewUrl(ev.reviewUrl || '');
+        setEditingArchived(ev.archived === true);
         setSaveError('');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -213,10 +219,15 @@ export default function AdminEventsClient() {
                 {events.map((ev) => (
                     <div
                         key={ev.id}
-                        className={`p-4 border rounded flex justify-between items-start ${editingId === ev.id ? 'border-yellow-400 bg-yellow-50' : ''}`}
+                        className={`p-4 border rounded flex justify-between items-start ${editingId === ev.id ? 'border-yellow-400 bg-yellow-50' : ev.archived ? 'border-gray-300 bg-gray-50 opacity-60' : ''}`}
                     >
                         <div className="flex-1 min-w-0">
-                            <div className="font-semibold">{ev.title}</div>
+                            <div className="font-semibold">
+                                {ev.title}
+                                {ev.archived && (
+                                    <span className="ml-2 px-2 py-0.5 text-xs rounded bg-gray-200 text-gray-600">アーカイブ済み</span>
+                                )}
+                            </div>
                             <div className="text-sm text-gray-500">{ev.date} · {ev.tags?.join(', ')}</div>
                             {ev.host && <div className="text-sm text-gray-500">主催者: {ev.host}</div>}
                             {ev.venue && <div className="text-sm text-gray-500">会場: {ev.venue}</div>}
@@ -239,11 +250,11 @@ export default function AdminEventsClient() {
                                 編集
                             </button>
                             <button
-                                onClick={() => handleDelete(ev.id)}
+                                onClick={() => handleArchiveToggle(ev.id, !ev.archived)}
                                 disabled={saving}
-                                className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
+                                className={`px-3 py-1 text-white rounded disabled:opacity-50 ${ev.archived ? 'bg-green-600' : 'bg-red-500'}`}
                             >
-                                削除
+                                {ev.archived ? '復元' : 'アーカイブ'}
                             </button>
                         </div>
                     </div>

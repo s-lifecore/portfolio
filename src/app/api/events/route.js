@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { listEvents, saveEventToFile, deleteEventFile } from '../../../lib/eventsMarkdown';
-import { saveEventToGitHub, deleteEventFromGitHub } from '../../../lib/eventsGitHub';
+import { listEvents, saveEventToFile, setEventArchived } from '../../../lib/eventsMarkdown';
+import { saveEventToGitHub, setEventArchivedOnGitHub } from '../../../lib/eventsGitHub';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -15,18 +15,20 @@ async function saveEvent(eventData) {
 }
 
 /**
- * イベントを削除する（ローカルはfsから削除、本番はGitHub API経由）
+ * イベントをアーカイブ/復元する（ファイルは削除しない。ローカルはfsへ直書き、本番はGitHub API経由）
  */
-async function deleteEvent(id) {
+async function archiveEvent(id, archived) {
     if (isDev) {
-        return deleteEventFile(id);
+        return setEventArchived(id, archived);
     }
-    return deleteEventFromGitHub(id);
+    return setEventArchivedOnGitHub(id, archived);
 }
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const events = listEvents();
+        const { searchParams } = new URL(request.url);
+        const includeArchived = searchParams.get('includeArchived') === 'true';
+        const events = listEvents({ includeArchived });
         return NextResponse.json(events);
     } catch (e) {
         return NextResponse.json({ error: e.message }, { status: 500 });
@@ -60,18 +62,23 @@ export async function PUT(request) {
     }
 }
 
-export async function DELETE(request) {
+/**
+ * イベントをアーカイブ/復元する（?id=...&archived=true|false）
+ * ファイルとGitHub上の履歴は残したまま、一覧表示から出し入れする
+ */
+export async function PATCH(request) {
     try {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
         if (!id) {
             return NextResponse.json({ error: 'id required' }, { status: 400 });
         }
-        const deleted = await deleteEvent(id);
-        if (!deleted) {
+        const archived = searchParams.get('archived') !== 'false';
+        const updated = await archiveEvent(id, archived);
+        if (!updated) {
             return NextResponse.json({ error: 'not found' }, { status: 404 });
         }
-        return NextResponse.json({ ok: true });
+        return NextResponse.json(updated);
     } catch (e) {
         return NextResponse.json({ error: e.message }, { status: 500 });
     }

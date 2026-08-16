@@ -39,18 +39,20 @@ function parseEventFile(filepath) {
         venue: data.venue || '',
         url: data.url || '',
         reviewUrl: data.reviewUrl || '',
+        archived: data.archived === true || data.archived === 'true',
         createdAt: data.createdAt || '',
         updatedAt: data.updatedAt || '',
     };
 }
 
 /**
- * 全イベントを日付降順で返す
+ * 全イベントを日付降順で返す（デフォルトではアーカイブ済みを除く）
  */
-export function listEvents() {
+export function listEvents({ includeArchived = false } = {}) {
     if (!fs.existsSync(EVENTS_DIR)) return [];
     const files = fs.readdirSync(EVENTS_DIR).filter((f) => f.endsWith('.md'));
-    const events = files.map((f) => parseEventFile(path.join(EVENTS_DIR, f)));
+    let events = files.map((f) => parseEventFile(path.join(EVENTS_DIR, f)));
+    if (!includeArchived) events = events.filter((e) => !e.archived);
     events.sort((a, b) => new Date(b.date) - new Date(a.date));
     return events;
 }
@@ -122,6 +124,7 @@ export function saveEventToFile(eventData) {
         ...(eventData.venue ? { venue: eventData.venue } : {}),
         ...(eventData.url ? { url: eventData.url } : {}),
         ...(eventData.reviewUrl ? { reviewUrl: eventData.reviewUrl } : {}),
+        archived: eventData.archived === true,
         createdAt,
         updatedAt: now,
     };
@@ -131,6 +134,7 @@ export function saveEventToFile(eventData) {
             if (v.length === 0) return `${k}: []`;
             return `${k}:\n${v.map((item) => `  - "${item}"`).join('\n')}`;
         }
+        if (typeof v === 'boolean') return `${k}: ${v}`;
         return `${k}: "${String(v).replace(/"/g, '\\"')}"`;
     });
 
@@ -154,25 +158,21 @@ export function saveEventToFile(eventData) {
         venue: frontmatter.venue || '',
         url: frontmatter.url || '',
         reviewUrl: frontmatter.reviewUrl || '',
+        archived: frontmatter.archived,
         createdAt,
         updatedAt: now,
     };
 }
 
 /**
- * IDでイベントを削除する（ローカル fs 削除）
- * @param {string} id - 削除するイベントのID
- * @returns {boolean} 削除成功かどうか
+ * IDでイベントをアーカイブ/復元する（ファイルは削除せず archived フラグのみ更新）
+ * @param {string} id
+ * @param {boolean} archived
+ * @returns {object|null} 更新後のイベント、見つからなければ null
  */
-export function deleteEventFile(id) {
-    if (!fs.existsSync(EVENTS_DIR)) return false;
-    const files = fs.readdirSync(EVENTS_DIR).filter((f) => f.endsWith('.md'));
-    for (const f of files) {
-        const ev = parseEventFile(path.join(EVENTS_DIR, f));
-        if (ev.id === id) {
-            fs.unlinkSync(path.join(EVENTS_DIR, f));
-            return true;
-        }
-    }
-    return false;
+export function setEventArchived(id, archived = true) {
+    const existing = getEventById(id);
+    if (!existing) return null;
+    const { _filename, ...data } = existing;
+    return saveEventToFile({ ...data, archived });
 }
