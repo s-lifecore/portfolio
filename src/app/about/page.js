@@ -87,6 +87,12 @@ const aboutData = {
         { period: "2026年8月 - 現在", position: "メンバー" }
       ]
     },
+  ],
+  events: [
+    { name: "ハッカソンイベント「Hackit」", date: "2026年8月", role: "運営メンバー", link: "https://hackit-2026.vercel.app/" },
+    { name: "Build With AI in 金沢工大", date: "2025年7月", role: "運営メンバー", link: "https://gdsckit.connpass.com/event/350228/" },
+    { name: "KIT Welcome Event 2026", date: "2026年4月", role: "主催", link: "https://gdsckit.connpass.com/event/389736/" },
+    { name: "【GoogleのAI開発最前線】研究開発のリアルとこれからの技術", date: "2026年7月", role: "主催", link: "https://gdsckit.connpass.com/event/398886/" },
   ]
 };
 
@@ -173,6 +179,36 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
+        </ToggleSection>
+
+        {/* 主催・運営イベント */}
+        <ToggleSection title="主催・運営イベント">
+          {aboutData.events.length === 0 ? (
+            <p>準備中です。</p>
+          ) : (
+            Object.entries(
+              aboutData.events.reduce((groups, event) => {
+                (groups[event.role] ||= []).push(event);
+                return groups;
+              }, {})
+            ).map(([role, events]) => (
+              <div key={role} className="mt-2">
+                <h3 className="font-semibold">{role}</h3>
+                <ul className="list-disc pl-6">
+                  {events.map((event, index) => (
+                    <li key={index}>
+                      {event.link ? (
+                        <a href={event.link} className="text-blue-600 dark:text-blue-400">{event.name}</a>
+                      ) : (
+                        event.name
+                      )}
+                      {" "}({event.date})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
         </ToggleSection>
 
         {/* 制作品 */}
