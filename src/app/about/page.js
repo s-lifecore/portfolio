@@ -33,7 +33,7 @@ const aboutData = {
     { name: "GDSC KIT / GDGoC KIT", link: "https://gdg.community.dev/gdg-on-campus-kanazawa-institute-of-technology-ishikawa-japan/"},
     { name: "情報セキュリティ・スキルアップ・プロジェクト", link: "https://www2.kanazawa-it.ac.jp/kitsec/" },
     { name: "教職課程", link: "https://www.kanazawa-it.ac.jp/kyoshoku/tlp/index.html" },
-    { name: "KIT DevelopersHub", link: "#" },
+    { name: "KIT DevelopersHub プロジェクト", link: "#" },
     { name: "防災・減災プロジェクトSoRA", link : "https://sora2kit.wixsite.com/-----------sora" },
   ],
   workExperience: [
@@ -44,6 +44,9 @@ const aboutData = {
         { period: "2024年11月 - 現在", position: "学内アンケートウェブアプリ「SAKITO」チーム" },
         { period: "2025年度", position: "新人採用（エンジニア職担当）" },
         { period: "2025年度", position: "エンジニア研修 メンターリーダー" },
+        { period: "2024年6月 - 2025年12月", position: "オフィス改善チーム メンバー" },
+        { period: "2025年12月 - 2026年7月", position: "オフィス改善チーム PM" },
+        { period: "2026年8月 - 現在", position: "オフィス改善チーム メンバー" },
       ]
     },
     {
@@ -66,16 +69,22 @@ const aboutData = {
       ]
     },
     {
-      company: "KIT DevelopersHub",
+      company: "KIT DevelopersHub プロジェクト",
       details: [
         { period: "2026年3月 - 現在", position: "イベント運営メンバー" },
-        { period: "2026年4月 - 現在", position: "開発メンバー" },
+        { period: "2026年4月 - 2026年8月", position: "開発メンバー" },
       ]
     },
     {
       company: "防災・減災プロジェクトSoRA",
       details: [
         { period: "2026年5月 - 現在", position: "メンバー" }
+      ]
+    },
+    {
+      company: "かなざわ学生防災ハブ K-MUSUBI",
+      details: [
+        { period: "2026年8月 - 現在", position: "メンバー" }
       ]
     },
   ]
