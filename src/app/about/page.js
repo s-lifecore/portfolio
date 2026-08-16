@@ -35,6 +35,7 @@ const aboutData = {
     { name: "教職課程", link: "https://www.kanazawa-it.ac.jp/kyoshoku/tlp/index.html" },
     { name: "KIT DevelopersHub プロジェクト", link: "#" },
     { name: "防災・減災プロジェクトSoRA", link : "https://sora2kit.wixsite.com/-----------sora" },
+    { name: "かなざわ学生防災ハブ K-MUSUBI", link: "https://www.instagram.com/p/DcDjBMtkcB-/" },
   ],
   workExperience: [
     {
