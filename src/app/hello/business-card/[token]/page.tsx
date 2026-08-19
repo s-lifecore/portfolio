@@ -114,6 +114,15 @@ export default async function BusinessCardPage({ params }: PageProps) {
                     </a>
 
                     <a
+                        href="https://www.instagram.com/cavalo_uma"
+                        target="_blank"
+                        className="flex items-center justify-between rounded-xl border border-gray-200 p-3.5 font-medium text-gray-700 transition hover:bg-gray-50 bg-white"
+                    >
+                        <span>📷 Instagram</span>
+                        <span className="text-xs text-gray-400">→</span>
+                    </a>
+
+                    <a
                         href="https://note.com/link_sudo"
                         target="_blank"
                         className="flex items-center justify-between rounded-xl border border-gray-200 p-3.5 font-medium text-gray-700 transition hover:bg-gray-50 bg-white"
