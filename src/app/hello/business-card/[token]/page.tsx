@@ -106,7 +106,7 @@ export default async function BusinessCardPage({ params }: PageProps) {
 
                     <div className="pt-1 grid grid-cols-2 gap-2">
                         <a
-                            href="https://trim6.onrender.com/VfE3Gw"
+                            href="https://8card.net/virtual_cards/8BBxlMyrvnMfWVtjTt9G7w"
                             target="_blank"
                             className="block text-center rounded-xl border border-gray-200 p-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 bg-gray-50/50"
                         >
@@ -117,7 +117,7 @@ export default async function BusinessCardPage({ params }: PageProps) {
                             target="_blank"
                             className="block text-center rounded-xl border border-gray-200 p-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 bg-gray-50/50"
                         >
-                            📱 my-parie
+                            📱 my-prairie
                         </a>
                     </div>
                 </div>
