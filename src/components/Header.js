@@ -15,6 +15,7 @@ export default function Header() {
     { href: "/about", label: "自己紹介" },
     { href: "/projects", label: "制作物一覧" },
     { href: "/joined", label: "イベント" },
+    { href: "/calendar", label: "カレンダー" },
     { href: "/contact", label: "お問い合わせ" },
     { href: "/blogs", label: "外部記事一覧" },
   ];
