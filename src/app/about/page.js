@@ -36,6 +36,7 @@ const aboutData = {
     { name: "KIT DevelopersHub プロジェクト", link: "#" },
     { name: "防災・減災プロジェクトSoRA", link : "https://sora2kit.wixsite.com/-----------sora" },
     { name: "かなざわ学生防災ハブ K-MUSUBI", link: "https://www.instagram.com/p/DcDjBMtkcB-/" },
+    { name: "GoogleAI学生コミュニティ", link: "https://sites.google.com/qutori.jp/gemini-student-community/" },
   ],
   workExperience: [
     {
@@ -86,6 +87,12 @@ const aboutData = {
       company: "かなざわ学生防災ハブ K-MUSUBI",
       details: [
         { period: "2026年8月 - 現在", position: "メンバー" }
+      ]
+    },
+    {
+      company: "GoogleAI学生コミュニティ",
+      details: [
+        { period: "2026年9月 - 現在", position: "学生メンバー" }
       ]
     },
   ],
