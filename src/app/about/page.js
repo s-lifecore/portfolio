@@ -119,7 +119,7 @@ function ToggleSection({ title, children, defaultOpen = false }) {
         </span>
       </button>
       <div
-        className={`transition-all duration-300 overflow-hidden ${isOpen ? "max-h-screen opacity-100 p-3" : "max-h-0 opacity-0"
+        className={`transition-all duration-300 overflow-hidden ${isOpen ? "max-h-[9999px] opacity-100 p-3" : "max-h-0 opacity-0"
           }`}
       >
         {children}
